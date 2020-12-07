@@ -281,6 +281,7 @@ public class View {
                     editMenu();
                     return;
                 }
+                break;
             }
             case "9": {
                 mainMenu();
