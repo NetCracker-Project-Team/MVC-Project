@@ -276,7 +276,11 @@ public class View {
             case "8": {
                 System.out.print("Имя файла: ");
                 File file1 = new File(in.next());
-                Controller.addFile(file, file1);
+                if (!Controller.addFile(file, file1)){
+                    System.out.println("\n\tЧто-то пошло не так!");
+                    editMenu();
+                    return;
+                }
             }
             case "9": {
                 mainMenu();
