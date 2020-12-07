@@ -21,8 +21,7 @@ public class View {
     /** Поле для выбора пункта меню пользователем */
     private static String selection;
     /** Поле для неправильного выбора пункта меню */
-    private static String wrongChoice = "\n\t!!Вы неправильно выбрали пункт меню!!" +
-                                        "\n\tХотите попробовать снова?\n\t1 - да\n\t2 - нет";
+    private static String wrongChoice = "\n\t!!Вы неправильно выбрали пункт меню!!";
     /** Поле для пустого меню */
     private static String emptyMenu = "\n\tВы не можете выполнить операцию. Так как меню пустое!\n" +
                                       "\tПопробуйте снова.";
@@ -41,10 +40,11 @@ public class View {
         System.out.println(selectionRule);
         System.out.println("\n\t\t---Главное меню:---");
         System.out.println("\t1 - Загрузить меню ресторана\n" +
-                           "\t2 - Cохранить меню ресторана\n" +
+                           "\t2 - Сохранить меню ресторана\n" +
                            "\t3 - Посмотреть данных\n" +
-                           "\t4 - Редактировать меню ресторана\n" +
-                           "\t5 - Выйти из программы" );
+                           "\t4 - Редактировать меню ресторана\n " +
+                           "\t5 - Поиск данных в ресторане" +
+                           "\t6 - Выйти из программы" );
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
         switch(selection){
@@ -78,15 +78,20 @@ public class View {
                     editMenu();
                 }
                 break;
-            case "5":
+            case "7":
+                if (!ok){
+                    System.out.println(emptyMenu);
+                    mainMenu();
+                }
+                else{
+                    search();
+                }
+                break;
+            case "6":
                 return;
             default:
                 System.out.println(wrongChoice);
-                System.out.print("\n---Ваш выбор: ");
-                selection = in.next();
-                if (selection.equals("1")){
-                    mainMenu();
-                }
+                mainMenu();
         }
     }
 
@@ -101,34 +106,31 @@ public class View {
             file = new File(in.next());
             System.out.print("\nПуть к файлу для категорий: ");
             fileCategory = new File(in.next());
-            Serialize.deserialize(file);
-            Serialize.deserializeCategory(fileCategory);
-            System.out.println("\t\tЗагрузка выполнена успешно!\n" );
-            if (k == 0) {
-                System.out.println("\t1 - посмотреть меню ресторана\n" +
-                                   "\t2 - вернуться в главное меню");
-                selection = in.next();
-                ok = true;
-                if (selection.equals("1")) {
-                    showMenu();
-                } else {
-                    mainMenu();
-                }
+            if (file.length() != 0 && fileCategory.length() != 0){
+                Serialize.deserialize(file);
+                Serialize.deserializeCategory(fileCategory);
+                Controller.addCategoryByDish(file,fileCategory);
             }
+            else throw new Exception("Пустой файл!");
+            System.out.println("\t\tЗагрузка выполнена успешно!\n" );
         }
         catch(IOException e) {
-            System.out.println("\t\tЧто-то пошло не так при загрузке...:(\n" +
-                               "\t1 - попробовать снова\n" +
-                               "\tлюбая клавиша - вернуться в главное меню");
+            System.out.println("\t\tЧто-то пошло не так при загрузке...:(\n" );
+        }
+        catch (Exception e){
+            System.out.println("\t\tФайл не может быть пустым!\n");
+        }
+        if (k == 0) {
+            System.out.println("\t1 - попробовать снова\n" +
+                    "\t2 - вернуться в главное меню");
             selection = in.next();
-            if (selection.equals("1")){
+            ok = true;
+            if (selection.equals("1")) {
                 download(k);
-            }
-            else{
+            } else {
                 mainMenu();
             }
         }
-
 
     }
 
@@ -178,7 +180,7 @@ public class View {
                 System.out.println(Controller.print(file));
                 break;
             case "2":
-                System.out.println(Controller.print(inputName("Название категории: "),file));
+                System.out.println(Controller.print(inputName("Название категории: ",1),file));
                 break;
             case "3":
                 System.out.println(Controller.printCategory(fileCategory));
@@ -205,77 +207,79 @@ public class View {
                 "\t6 - добавить блюдо\n" +
                 "\t7 - удалить блюдо\n " +
                 "\t8 - добавить категорию\n" +
-                "\t9 - вернуться в главное меню");
+                "\t9 - добавить данные из файла\n" +
+                "\t10 - вернуться в главное меню");
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
         switch (selection) {
             case "1": {
                 int i = inputNumber("\nНомер блюда: ");
-                String name = inputName("Название блюда: ");
+                String name = inputName("Название блюда: ", 0);
                 double price = inputPrice();
-                Category category = new Category(inputName("Категория блюда: "));
+                Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish = new Dish(name, category, price);
                 Controller.setDataByNumber(i, dish, file);
                 break;
             }
             case "2": {
-                String name1 = inputName("Название блюда: ");
-                String name = inputName("Название нового блюда: ");
+                String name1 = inputName("Название блюда: ", 0);
+                String name = inputName("Название нового блюда: ", 2);
                 double price = inputPrice();
-                Category category = new Category(inputName("Категория нового блюда: "));
+                Category category = new Category(inputName("Категория нового блюда: ", 1));
                 Dish dish = new Dish(name, category, price);
                 Controller.setDataByName(name1, dish, file);
                 break;
             }
             case "3": {
-                String name = inputName("Название блюда: ");
-                Category category = new Category(inputName("Новая категория блюда: "));
+                String name = inputName("Название блюда: ", 0);
+                Category category = new Category(inputName("Новая категория блюда: ", 3));
                 Controller.setCategoryByName(name, category, file);
                 break;
             }
             case "4": {
-                String name = inputName("Название блюда: ");
-                String name1 = inputName("Новое название блюда: ");
-                Controller.setNameByName(name,name1,file);
+                String name = inputName("Название блюда: ", 0);
+                String name1 = inputName("Новое название блюда: ", 2);
+                Controller.setNameByName(name, name1, file);
             }
-            case "5":{
-                String name = inputName("Название блюда: ");
+            case "5": {
+                String name = inputName("Название блюда: ", 0);
                 double price = inputPrice();
                 Controller.setPriceByName(name, price, file);
                 break;
             }
             case "6": {
-                String name = inputName("Название блюда: ");
+                String name = inputName("Название блюда: ", 0);
                 double price = inputPrice();
-                Category category = new Category(inputName("Категория блюда: "));
+                Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish5 = new Dish(name, category, price);
                 Controller.addData(dish5, file, fileCategory);
                 break;
             }
             case "7": {
-                String name = inputName("Название блюда: ");
+                String name = inputName("Название блюда: ", 0);
                 Controller.deleteData(name, file);
                 break;
             }
             case "8": {
-                String name = inputName("Название категории: ");
-                Controller.addCategory(new Category(name),fileCategory);
+                String name = inputName("Название категории: ", 1);
+                Controller.addCategory(new Category(name), fileCategory);
                 break;
             }
-            case "9": {
+            case "9":{
+                System.out.print("Имя файла: ");
+                File file1 = new File(in.next());
+                Controller.addFile(file,file1);
+            }
+            case "10": {
                 mainMenu();
                 return;
             }
             default: {
                 System.out.println(wrongChoice);
-                System.out.print("\n---Ваш выбор: ");
-                selection = in.next();
-                if (selection.equals("1")) {
-                    editMenu();
-                    return;
-                }
+                editMenu();
             }
         }
+        System.out.println("\n\t\tОперация успешно выполнена!");
         System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
         if (in.next().equals("1")) editMenu();
         else   mainMenu();
@@ -283,24 +287,45 @@ public class View {
 
     /**
      *Метод ввода имени
+     * @param s - строка для ввода
+     * @param k - показывает, что вводится( 0 - название блюда, 1 - названик категории, 2 - новое название блюда, 3 - новое название категории)
      */
-    private static String inputName(String s){
-        System.out.println(s);
+    private static String inputName(String s, int k){
+        System.out.print(s);
         String name = in.next();
-        return name;
+        String t = name + "*";
+        if (k == 0 && Controller.getDataByName(t,file)==""){
+            System.out.println("\n\tТакого блюда нет!");
+        }
+        else if (k == 2 && Controller.getDataByName(t,file)==""){
+            System.out.println("\n\tТакого блюда уже есть!");
+        }
+        else if (k == 3 && Controller.getDataByCategory(t,file) != ""){
+            System.out.println("\n\tТакая категория есть!");
+        }
+        else if (k == 1 && Controller.getDataByCategory(t,file) == ""){
+            System.out.println("\n\tТакой категориии нет!");
+        }
+        else return name;
+        System.out.println("\n\t1 - попробовать ввести заново имя\n" +
+                "\tлюбая клавиша - вернуться в меню");
+        if (in.next().equals("1")) return inputName(s,k);
+        else mainMenu();
+        return null;
     }
 
     /**
      *Метод ввода цены блюда
+     * @throws Exception
      */
     private static double inputPrice(){
-        System.out.println("Цена блюда: ");
+        System.out.print("Цена блюда: ");
         try {
             double price = in.nextDouble();
             if (price <= 0) throw new Exception("Отрицательное число!");
             return price;
-        } catch (Exception ex){
-            in.next();
+        } catch (Exception e){
+            if (!e.toString().equals("Отрицательное число!")) in.next();
             System.out.println("\t\tВы неправильно ввели цену!\n" +
                     "\t\tЦена - это вещественное положительное число!");
             System.out.println("\n\t1 - попробовать ввести заново цену\n" +
@@ -313,16 +338,17 @@ public class View {
 
     /**
      *Метод ввода номера блюда
+     * @throws Exception
      */
     private static int inputNumber(String s){
-        System.out.println(s);
+        System.out.print(s);
         try{
             int i = in.nextInt();
             if (i < 0) throw new Exception("Отрицательное число!");
             if (i > Serialize.deserialize(file).size()) throw new Exception("Такого блюда нет!");
             return i;
         } catch (Exception e) {
-            in.next();
+            if (!e.toString().equals("Отрицательное число!") && !e.toString().equals("Такого блюда нет!")) in.next();
             System.out.println("\t\tВы неправильно ввели номер!\n" +
                     "\t\tНомер - это целое положительное число! Номер не должен превышать количества блюд");
             System.out.println("\n\t1 - попробовать ввести заново номер\n" +
@@ -333,6 +359,41 @@ public class View {
         return -1;
     }
 
+    /**
+     *Метод поиска данных
+     */
+    private static void search(){
+        System.out.println("\n\t\tПoиск данных:\n" +
+                "\t1 - поиск блюда\n" +
+                "\t2 - поиск по категории\n" +
+                "\t другая последовательность - выход в меню ");
+        System.out.print("\n---Ваш выбор: ");
+        selection = in.next();
+        System.out.print("\n\tПример шаблона: name, nameCategory, *\n" +
+                "Шаблон:");
+        String template = in.next();
+        String result;
+        switch (selection){
+            case "1":
+                result = Controller.getDataByName(template,file);
+                break;
+            case "2":
+                result = Controller.getDataByCategory(template,file);
+                break;
+            default:
+                mainMenu();
+                return;
+        }
+        if (result.equals("")){
+            System.out.println("\n\tДанных нет:(");
+        }
+        else {
+            System.out.println("\n\tНайденные данные:");
+            System.out.println(result);
+        }
+        System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
+        if (in.next().equals("1")) search();
+        else   mainMenu();
+    }
+
 }
-
-
