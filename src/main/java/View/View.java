@@ -376,7 +376,7 @@ public class View {
                 "\t другая последовательность - выход в меню ");
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
-        System.out.print("\n\tПример шаблона: name, nameCategory, *\n" +
+        System.out.print("\n\tПример шаблона: na*m?* \n" +
                 "Шаблон:");
         String template = in.next();
         String result;
