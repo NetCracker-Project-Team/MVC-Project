@@ -197,7 +197,9 @@ public class View {
      */
     private static void newDish(){
         System.out.println("\n\t\tДобавление блюда");
-        String name = inputName("Название блюда: ", 2);
+        int k = 2;
+        if (file.length() == 0) k = 5;
+        String name = inputName("Название блюда: ", k);
         double price = inputPrice();
         Category category = new Category(inputName("Категория блюда: ", 1));
         Dish dish5 = new Dish(name, category, price);
@@ -397,3 +399,5 @@ public class View {
     }
 
 }
+
+
