@@ -206,7 +206,7 @@ public class View {
         Controller.addData(dish5, file, fileCategory);
         System.out.println("\n\t\tОперация успешно выполнена!");
         System.out.println("\n\t\tХотите повторить?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
-        if (in.next().equals("1")) editMenu();
+        if (in.next().equals("1")) newDish();
         else   mainMenu();
     }
 
