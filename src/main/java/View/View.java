@@ -41,7 +41,7 @@ public class View {
                            "\t2 - Сохранить меню ресторана\n" +
                            "\t3 - Посмотреть данных\n" +
                            "\t4 - Редактировать меню ресторана\n " +
-                           "\t5 - Поиск данных в ресторане" +
+                           "\t5 - Поиск данных в ресторане\n" +
                            "\t6 - Выйти из программы" );
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
@@ -50,7 +50,7 @@ public class View {
                 download(0);
                 break;
             case "2":
-                if (file.length() == 0){
+                if (file == null || file.length() == 0){
                     System.out.println(emptyMenu);
                     mainMenu();
                 }
@@ -59,7 +59,7 @@ public class View {
                 }
                 break;
             case "3":
-                if (file.length() == 0){
+                if (file == null || file.length() == 0){
                     System.out.println(emptyMenu);
                     mainMenu();
                 }
@@ -68,10 +68,14 @@ public class View {
                 }
                 break;
             case "4":
+                if (file == null){
+                    System.out.println("\n\tНет файла!");
+                    mainMenu();
+                }
                 editMenu();
                 break;
             case "5":
-                if (file.length() == 0){
+                if (file == null || file.length() == 0){
                     System.out.println(emptyMenu);
                     mainMenu();
                 }
