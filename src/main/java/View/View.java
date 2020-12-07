@@ -26,7 +26,7 @@ public class View {
     private static String emptyMenu = "\n\tВы не можете выполнить операцию. Так как меню пустое!\n" +
                                       "\tПопробуйте снова.";
     /** Поле для файла блюд */
-    private static File file;
+    private static File file = null;
     /** Поле для файла категорий*/
     private static File fileCategory;
 
