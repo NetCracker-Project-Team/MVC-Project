@@ -68,15 +68,9 @@ public class View {
                 }
                 break;
             case "4":
-                if (file.length() == 0){
-                    System.out.println(emptyMenu);
-                    mainMenu();
-                }
-                else{
-                    editMenu();
-                }
+                editMenu();
                 break;
-            case "7":
+            case "5":
                 if (file.length() == 0){
                     System.out.println(emptyMenu);
                     mainMenu();
