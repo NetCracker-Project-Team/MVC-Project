@@ -118,7 +118,7 @@ public class View {
             System.out.println("\t\tЧто-то пошло не так при загрузке...:(\n" );
         }
         catch (Exception e){
-            System.out.println("\t\tФайл не может быть пустым!\n");
+            System.out.println("\t\t"+e.toString()+"\n");
         }
         if (k == 0) {
             System.out.println("\t1 - попробовать снова\n" +
@@ -248,7 +248,7 @@ public class View {
                 break;
             }
             case "6": {
-                String name = inputName("Название блюда: ", 0);
+                String name = inputName("Название блюда: ", 2);
                 double price = inputPrice();
                 Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish5 = new Dish(name, category, price);
@@ -297,14 +297,8 @@ public class View {
         if (k == 0 && Controller.getDataByName(t,file)==""){
             System.out.println("\n\tТакого блюда нет!");
         }
-        else if (k == 2 && Controller.getDataByName(t,file)==""){
+        else if (k == 2 && Controller.getDataByName(t,file)!=""){
             System.out.println("\n\tТакого блюда уже есть!");
-        }
-        else if (k == 3 && Controller.getDataByCategory(t,file) != ""){
-            System.out.println("\n\tТакая категория есть!");
-        }
-        else if (k == 1 && Controller.getDataByCategory(t,file) == ""){
-            System.out.println("\n\tТакой категориии нет!");
         }
         else return name;
         System.out.println("\n\t1 - попробовать ввести заново имя\n" +
@@ -397,3 +391,5 @@ public class View {
     }
 
 }
+
+
