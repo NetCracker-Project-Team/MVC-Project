@@ -9,6 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import javax.imageio.IIOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Scanner;
+
 /**
  * Класс - представление
  */
@@ -28,7 +35,7 @@ public class View {
     /** Поле для файла блюд */
     private static File file;
     /** Поле для файла категорий*/
-    private static File fileCategory;
+    private static File fileCategory = new File("fileC.json");
 
 
     /**
@@ -39,8 +46,8 @@ public class View {
         System.out.println("\n\t\t---Главное меню:---");
         System.out.println("\t1 - Загрузить меню ресторана\n" +
                            "\t2 - Сохранить меню ресторана\n" +
-                           "\t3 - Посмотреть данных\n" +
-                           "\t4 - Добавить новые блюда\n" +
+                           "\t3 - Посмотреть данные\n" +
+                           "\t4 - Добавление нового блюда\n" +
                            "\t5 - Редактировать меню ресторана\n " +
                            "\t6 - Поиск данных в ресторане\n" +
                            "\t7 - Выйти из программы" );
@@ -112,8 +119,6 @@ public class View {
         try {
             System.out.print("\nПуть к файлу для меню: ");
             file = new File(in.next());
-            System.out.print("\nПуть к файлу для категорий: ");
-            fileCategory = new File(in.next());
             Controller.addCategoryByDish(file,fileCategory);
             System.out.println("\t\tЗагрузка выполнена успешно!\n" );
         }
@@ -145,14 +150,16 @@ public class View {
         try {
             Serialize.serialize(Serialize.deserialize(file),file0);
             System.out.println("\t\tСохранение выполнено успешно!\n" +
-                    "\tлюбая клавиша - вернуться в главное меню");
+                    "\tлюбая другая последовательность - вернуться в главное меню");
+            System.out.print("\n---Ваш выбор: ");
             selection = in.next();
             mainMenu();
         }
         catch(IOException e) {
             System.out.println("\t\tЧто-то пошло не так при сохранении...:(\n" +
                     "\t1 - попробовать снова\n" +
-                    "\tлюбая клавиша - вернуться в главное меню");
+                    "\tлюбая другая последовательность - вернуться в главное меню");
+            System.out.print("\n---Ваш выбор: ");
             selection = in.next();
             if (selection.equals("1")){
                 save();
@@ -196,6 +203,7 @@ public class View {
      *Метод добавления блюда
      */
     private static void newDish(){
+
         System.out.println("\n\t\tДобавление блюда");
         int k = 2;
         if (file.length() == 0) k = 5;
@@ -205,9 +213,10 @@ public class View {
         Dish dish5 = new Dish(name, category, price);
         Controller.addData(dish5, file, fileCategory);
         System.out.println("\n\t\tОперация успешно выполнена!");
-        System.out.println("\n\t\tХотите повторить?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
-        if (in.next().equals("1")) newDish();
-        else   mainMenu();
+        System.out.println("\n\t\tХотите повторить?\n\t1 - да\n\tлюбая другая последовательность - вернуться в меню");
+        System.out.print("\n---Ваш выбор: ");
+        if (in.next().equals("1")) editMenu();
+        else  mainMenu();
     }
 
     /**
@@ -294,6 +303,7 @@ public class View {
         }
         System.out.println("\n\t\tОперация успешно выполнена!");
         System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
+        System.out.print("\n---Ваш выбор: ");
         if (in.next().equals("1")) editMenu();
         else   mainMenu();
     }
@@ -376,7 +386,7 @@ public class View {
                 "\t другая последовательность - выход в меню ");
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
-        System.out.print("\n\tПример шаблона: na*m?* \n" +
+        System.out.print("\n\tПример шаблона: name, nameCategory, *\n" +
                 "Шаблон:");
         String template = in.next();
         String result;
@@ -398,11 +408,10 @@ public class View {
             System.out.println("\n\tНайденные данные:");
             System.out.println(result);
         }
-        System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
+        System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая другая последовательность - вернуться в меню");
+        System.out.print("\n---Ваш выбор: ");
         if (in.next().equals("1")) search();
         else   mainMenu();
     }
 
 }
-
-
