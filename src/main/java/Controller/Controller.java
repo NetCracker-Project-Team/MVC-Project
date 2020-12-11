@@ -205,22 +205,19 @@ public class Controller {
      */
     public static String print(File file){
         try {
-            String s=Serialize.deserialize(file).toString();
-            String s1="";
-            char[] t=s.toCharArray();
-            for(int i=1;i<s.length()-1;i++){
-                if('D' == t[i]){
-                    if(t[i+1] == 'i'){
-                        if(t[i+2] == 's'){
-                            if(t[i+3]=='h'){
-                                s1+='\n';
-                            }
-                        }
-                    }
-                }
-                s1+=t[i];
+            List<Dish> dishes=Serialize.deserialize(file);
+            String s="" + '\n';
+            int k=1;
+            for(int i=0;i<dishes.size();i++) {
+
+                s += k + "  ";
+                s += dishes.get(i).getName() + "\n";
+                s += "Категория:  ";
+                s += dishes.get(i).getCategory().getNameCategory() + "\n";
+                s += "Цена:  ";
+                s += dishes.get(i).getPrice() + "\n";
+                k++;
             }
-            s=s1;
             return s;
         } catch (IOException e) {
             e.printStackTrace();
@@ -355,11 +352,17 @@ public class Controller {
     public static String print(String category,File file){
         try {
             List<Dish> dishes=Serialize.deserialize(file);
-            String s=category + '\n';
+            String s="" + '\n';
+            int k=1;
             for(int i=0;i<dishes.size();i++){
                 if(dishes.get(i).getCategory().getNameCategory().equals(category)){
-                    s+=dishes.get(i).toString();
-                    s+='\n';
+                    s+=k+"  ";
+                    s+=dishes.get(i).getName()+ "\n";
+                    s+="Категория:  ";
+                    s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
+                    s+="Цена:  ";
+                    s+=dishes.get(i).getPrice()+ "\n";
+                    k++;
                 }
             }
             return s;
