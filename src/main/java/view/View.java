@@ -542,7 +542,7 @@ public class View {
         }
         System.out.println("\n\t\tОперация успешно выполнена!");
         System.out.println("\n\t\tИзменное меню");
-        Controller.print(file);
+        System.out.println(Controller.print(file));
         System.out.println("\n\t\tХотите продолжить редактирование?\n\t1 - да\n\tлюбая клавиша - вернуться в меню");
         System.out.print("\n---Ваш выбор: ");
         if (in.next().equals("1")) editMenu();
