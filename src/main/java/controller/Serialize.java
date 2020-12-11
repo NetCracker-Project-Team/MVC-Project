@@ -1,6 +1,7 @@
-package Controller;
+package controller;
 
-import Model.Dish;
+import model.Category;
+import model.Dish;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -25,7 +26,7 @@ public class Serialize {
      * @param file - файл
      * @throws IOException
      */
-    public static void serializeCategory(List<Category> categories,File file) throws IOException {
+    public static void serializeCategory(List<Category> categories, File file) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, categories);
     }

@@ -1,8 +1,6 @@
-package View;
+package view;
 
-import javax.imageio.IIOException;
 import java.io.*;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -110,7 +108,7 @@ public class View {
             file = new File(in.next());
             fileCategory = new File("fileC.json");
             fileCategory.deleteOnExit();
-            Controller.addCategoryByDish(file,fileCategory);
+            controller.addCategoryByDish(file,fileCategory);
             System.out.println("\t\tЗагрузка выполнена успешно!\n" );
         }
         catch (Exception e){
@@ -174,13 +172,13 @@ public class View {
         selection = in.next();
         switch (selection){
             case "1":
-                System.out.println(Controller.print(file));
+                System.out.println(controller.print(file));
                 break;
             case "2":
-                System.out.println(Controller.print(inputName("Название категории: ",1),file));
+                System.out.println(controller.print(inputName("Название категории: ",1),file));
                 break;
             case "3":
-                System.out.println(Controller.printCategory(fileCategory));
+                System.out.println(controller.printCategory(fileCategory));
                 break;
             default:
                 mainMenu();
@@ -210,18 +208,18 @@ public class View {
                 double price = inputPrice();
                 Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish5 = new Dish(name, category, price);
-                Controller.addData(dish5, file, fileCategory);
+                controller.addData(dish5, file, fileCategory);
                 break;
             }
             case "2": {
                 String nameC = inputName("Название категории: ", 1);
-                Controller.addCategory(new Category(nameC), fileCategory);
+                controller.addCategory(new Category(nameC), fileCategory);
                 break;
             }
             case "3": {
                 System.out.print("Имя файла: ");
                 File file1 = new File(in.next());
-                if (!Controller.addFile(file, file1)) {
+                if (!controller.addFile(file, file1)) {
                     System.out.println("\n\tЧто-то пошло не так!");
                     editMenu();
                     return;
@@ -260,7 +258,7 @@ public class View {
                 double price = inputPrice();
                 Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish = new Dish(name, category, price);
-                Controller.setDataByNumber(i, dish, file);
+                controller.setDataByNumber(i, dish, file);
                 break;
             }
             case "2": {
@@ -269,29 +267,29 @@ public class View {
                 double price = inputPrice();
                 Category category = new Category(inputName("Категория нового блюда: ", 1));
                 Dish dish = new Dish(name, category, price);
-                Controller.setDataByName(name1, dish, file);
+                controller.setDataByName(name1, dish, file);
                 break;
             }
             case "3": {
                 String name = inputName("Название блюда: ", 0);
                 Category category = new Category(inputName("Новая категория блюда: ", 3));
-                Controller.setCategoryByName(name, category, file);
+                controller.setCategoryByName(name, category, file);
                 break;
             }
             case "4": {
                 String name = inputName("Название блюда: ", 0);
                 String name1 = inputName("Новое название блюда: ", 2);
-                Controller.setNameByName(name, name1, file);
+                controller.setNameByName(name, name1, file);
             }
             case "5": {
                 String name = inputName("Название блюда: ", 0);
                 double price = inputPrice();
-                Controller.setPriceByName(name, price, file);
+                controller.setPriceByName(name, price, file);
                 break;
             }
             case "6": {
                 String name = inputName("Название блюда: ", 0);
-                Controller.deleteData(name, file);
+                controller.deleteData(name, file);
                 break;
             }
             case "7": {
@@ -319,10 +317,10 @@ public class View {
         System.out.print(s);
         String name = in.next();
         String t = name + "*";
-        if (k == 0 && Controller.getDataByName(t,file)==""){
+        if (k == 0 && controller.getDataByName(t,file)==""){
             System.out.println("\n\tТакого блюда нет!");
         }
-        else if (k == 2 && Controller.getDataByName(t,file)!=""){
+        else if (k == 2 && controller.getDataByName(t,file)!=""){
             System.out.println("\n\tТакое блюдо уже есть!");
         }
         else return name;
@@ -394,10 +392,10 @@ public class View {
         String result;
         switch (selection){
             case "1":
-                result = Controller.getDataByName(template,file);
+                result = controller.getDataByName(template,file);
                 break;
             case "2":
-                result = Controller.getDataByCategory(template,file);
+                result = controller.getDataByCategory(template,file);
                 break;
             default:
                 mainMenu();

@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 /**
  * Класс - модель блюд со свойствами <b>name</b>, <b>category</b>,</b> и <b>price</b>.

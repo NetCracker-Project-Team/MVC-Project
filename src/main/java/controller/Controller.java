@@ -1,7 +1,7 @@
-package Controller;
+package controller;
 
-import Model.Category;
-import Model.Dish;
+import model.Category;
+import model.Dish;
 
 import java.io.File;
 import java.io.IOException;
