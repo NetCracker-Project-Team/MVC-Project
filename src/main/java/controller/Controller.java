@@ -404,7 +404,7 @@ public class Controller {
             String s="";
             char[] t=name.toCharArray();
             List<Dish> dishes = Serialize.deserialize(file);
-            int k=1;
+            int j=1;
             for(int i=0;i<dishes.size();i++){
                 int n=0,k=0; boolean bool=false;
                 while(n<t.length) {
@@ -424,13 +424,13 @@ public class Controller {
                     }
                 }
                 if (bool){
-                    s+=k+"  ";
+                    s+=j+"  ";
                     s+=dishes.get(i).getName()+ "\n";
                     s+="Категория:  ";
                     s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
                     s+="Цена:  ";
                     s+=dishes.get(i).getPrice()+ "\n";
-                    k++;
+                    j++;
                     s+='\n';
                 }
             }
@@ -452,7 +452,7 @@ public class Controller {
             String s="";
             char[] t=category.toCharArray();
             List<Dish> dishes = Serialize.deserialize(file);
-            int k=1;
+            int j=1;
             for(int i=0;i<dishes.size();i++){
                 int n=0,k=0; boolean bool=false;
                 while(n<t.length) {
@@ -472,13 +472,13 @@ public class Controller {
                     }
                 }
                 if (bool){
-                    s+=k+"  ";
+                    s+=j+"  ";
                     s+=dishes.get(i).getName()+ "\n";
                     s+="Категория:  ";
                     s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
                     s+="Цена:  ";
                     s+=dishes.get(i).getPrice()+ "\n";
-                    k++;
+                    j++;
                     s+='\n';
                 }
             }
