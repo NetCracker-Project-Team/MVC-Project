@@ -1,3 +1,5 @@
+package View;
+
 import javax.imageio.IIOException;
 import java.io.*;
 import java.util.List;
