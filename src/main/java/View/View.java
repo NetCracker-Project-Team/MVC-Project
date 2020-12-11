@@ -1,18 +1,5 @@
-package View;
-
-import Controller.Controller;
-import Model.Category;
-import Model.Dish;
-import Controller.Serialize;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
-
 import javax.imageio.IIOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,7 +22,7 @@ public class View {
     /** Поле для файла блюд */
     private static File file;
     /** Поле для файла категорий*/
-    private static File fileCategory = new File("fileC.json");
+    private static File fileCategory ;
 
 
     /**
@@ -47,7 +34,7 @@ public class View {
         System.out.println("\t1 - Загрузить меню ресторана\n" +
                            "\t2 - Сохранить меню ресторана\n" +
                            "\t3 - Посмотреть данные\n" +
-                           "\t4 - Добавление нового блюда\n" +
+                           "\t4 - Добавление новых данных\n" +
                            "\t5 - Редактировать меню ресторана\n " +
                            "\t6 - Поиск данных в ресторане\n" +
                            "\t7 - Выйти из программы" );
@@ -119,6 +106,8 @@ public class View {
         try {
             System.out.print("\nПуть к файлу для меню: ");
             file = new File(in.next());
+            fileCategory = new File("fileC.json");
+            fileCategory.deleteOnExit();
             Controller.addCategoryByDish(file,fileCategory);
             System.out.println("\t\tЗагрузка выполнена успешно!\n" );
         }
@@ -127,7 +116,7 @@ public class View {
         }
         if (k == 0) {
             System.out.println("\t1 - попробовать снова\n" +
-                    "\t2 - вернуться в главное меню");
+                    "\tлюбая другая последовательность - вернуться в главное меню");
             selection = in.next();
             if (selection.equals("1")) {
                 download(k);
@@ -203,19 +192,47 @@ public class View {
      *Метод добавления блюда
      */
     private static void newDish(){
-
-        System.out.println("\n\t\tДобавление блюда");
-        int k = 2;
-        if (file.length() == 0) k = 5;
-        String name = inputName("Название блюда: ", k);
-        double price = inputPrice();
-        Category category = new Category(inputName("Категория блюда: ", 1));
-        Dish dish5 = new Dish(name, category, price);
-        Controller.addData(dish5, file, fileCategory);
+        System.out.println("\n\t\tДобавление данных:\n" +
+                "\t1 - добавить блюдо\n" +
+                "\t2 - добавить категорию\n" +
+                "\t3 - добавить данные из файла\n" +
+                "\t другая последовательность - выход в меню ");
+        System.out.print("\n---Ваш выбор: ");
+        selection = in.next();
+        switch (selection){
+            case "1": {
+                System.out.println("\n\t\tДобавление блюда");
+                int k = 2;
+                if (file.length() == 0) k = 5;
+                String name = inputName("Название блюда: ", k);
+                double price = inputPrice();
+                Category category = new Category(inputName("Категория блюда: ", 1));
+                Dish dish5 = new Dish(name, category, price);
+                Controller.addData(dish5, file, fileCategory);
+                break;
+            }
+            case "2": {
+                String nameC = inputName("Название категории: ", 1);
+                Controller.addCategory(new Category(nameC), fileCategory);
+                break;
+            }
+            case "3": {
+                System.out.print("Имя файла: ");
+                File file1 = new File(in.next());
+                if (!Controller.addFile(file, file1)) {
+                    System.out.println("\n\tЧто-то пошло не так!");
+                    editMenu();
+                    return;
+                }
+                break;
+            }
+            default:
+                mainMenu();
+        }
         System.out.println("\n\t\tОперация успешно выполнена!");
         System.out.println("\n\t\tХотите повторить?\n\t1 - да\n\tлюбая другая последовательность - вернуться в меню");
         System.out.print("\n---Ваш выбор: ");
-        if (in.next().equals("1")) editMenu();
+        if (in.next().equals("1")) newDish();
         else  mainMenu();
     }
 
@@ -231,9 +248,7 @@ public class View {
                 "\t4 - Изменить название блюда по названию\n" +
                 "\t5 - Изменить цену блюда по названию\n" +
                 "\t6 - удалить блюдо\n " +
-                "\t7 - добавить категорию\n" +
-                "\t8 - добавить данные из файла\n" +
-                "\t9 - вернуться в главное меню");
+                "\t7 - вернуться в главное меню");
         System.out.print("\n---Ваш выбор: ");
         selection = in.next();
         switch (selection) {
@@ -278,21 +293,6 @@ public class View {
                 break;
             }
             case "7": {
-                String name = inputName("Название категории: ", 1);
-                Controller.addCategory(new Category(name), fileCategory);
-                break;
-            }
-            case "8": {
-                System.out.print("Имя файла: ");
-                File file1 = new File(in.next());
-                if (!Controller.addFile(file, file1)){
-                    System.out.println("\n\tЧто-то пошло не так!");
-                    editMenu();
-                    return;
-                }
-                break;
-            }
-            case "9": {
                 mainMenu();
                 return;
             }
@@ -415,3 +415,5 @@ public class View {
     }
 
 }
+
+
