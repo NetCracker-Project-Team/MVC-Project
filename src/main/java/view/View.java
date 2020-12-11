@@ -188,9 +188,10 @@ public class View {
             default:
                 mainMenu();
         }
-        System.out.print("\n\tВведите любое значение, чтобы выйти в главное меню - ");
-        in.next();
-        mainMenu();
+        System.out.println("\n\t\tХотите повторить?\n\t1 - да\n\tлюбая другая последовательность - вернуться в меню");
+        System.out.print("\n---Ваш выбор: ");
+        if (in.next().equals("1")) showMenu();
+        else  mainMenu();
     }
 
     /**
