@@ -42,7 +42,8 @@ public class View {
                            "\t5 - Редактировать меню ресторана\n " +
                            "\t6 - Поиск данных в ресторане\n" +
                            "\t7 - Выйти из программы" );
-        System.out.print("\n---Ваш выбор: ");
+
+        System.out.print("\n---Ваш выбор:");
         selection = in.next();
         switch(selection){
             case "1":
@@ -258,7 +259,7 @@ public class View {
         switch (selection) {
             case "1": {
                 int i = inputNumber("\nНомер блюда: ");
-                String name = inputName("Название блюда: ", 0);
+                String name = inputName("Название блюда: ", 2);
                 double price = inputPrice();
                 Category category = new Category(inputName("Категория блюда: ", 1));
                 Dish dish = new Dish(name, category, price);
@@ -325,7 +326,7 @@ public class View {
             System.out.println("\n\tТакого блюда нет!");
         }
         else if (k == 2 && Controller.getDataByName(t,file)!=""){
-            System.out.println("\n\tТакое блюдо уже есть!");
+            System.out.println("\n\tТакое название блюда уже есть!");
         }
         else return name;
         System.out.println("\n\t1 - попробовать ввести заново имя\n" +
@@ -342,11 +343,10 @@ public class View {
     private static double inputPrice(){
         System.out.print("Цена блюда: ");
         try {
-            double price = in.nextDouble();
+            double price = Double.parseDouble(in.next());
             if (price <= 0) throw new Exception("Отрицательное число!");
             return price;
         } catch (Exception e){
-            if (!e.toString().equals("Отрицательное число!")) in.next();
             System.out.println("\t\tВы неправильно ввели цену!\n" +
                     "\t\tЦена - это вещественное положительное число!");
             System.out.println("\n\t1 - попробовать ввести заново цену\n" +
@@ -364,12 +364,11 @@ public class View {
     private static int inputNumber(String s){
         System.out.print(s);
         try{
-            int i = in.nextInt();
+            int i = Integer.parseInt(in.next());
             if (i < 0) throw new Exception("Отрицательное число!");
             if (i > Serialize.deserialize(file).size()) throw new Exception("Такого блюда нет!");
             return i;
         } catch (Exception e) {
-            if (!e.toString().equals("Отрицательное число!") && !e.toString().equals("Такого блюда нет!")) in.next();
             System.out.println("\t\tВы неправильно ввели номер!\n" +
                     "\t\tНомер - это целое положительное число! Номер не должен превышать количества блюд");
             System.out.println("\n\t1 - попробовать ввести заново номер\n" +
@@ -419,5 +418,3 @@ public class View {
     }
 
 }
-
-
