@@ -52,5 +52,40 @@ public class Serialize {
         List<Category> categories =mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(List.class, Category.class));
         return categories;
     }
+    /**
+     * Метод сериализации блюда в байтовый поток
+     * @param dish - блюдо
+     * @param out - поток
+     */
+    public static void serializeDish (Dish dish, OutputStream out){
+        try {
+            ObjectOutputStream stream = new ObjectOutputStream(out);
+            stream.writeObject(dish);
+        }
+        catch (IOException e){
+            System.out.println("Some error occurred!");
+        }
+    }
+
+    /**
+     * Метод десериализации блюда из байтового потока
+     * @param in - поток
+     * @return
+     */
+    public static Dish deserializeDish (InputStream in){
+        try {
+            ObjectInputStream stream = new ObjectInputStream(in);
+            Dish build = (Dish) stream.readObject();
+            return build;
+        }
+        catch (IOException e){
+            System.out.println("Some error occurred!");
+            return null;
+        }
+        catch(ClassNotFoundException e) {
+            System.out.println("Wrong object type");
+            return null;
+        }
+    }
 
 }
