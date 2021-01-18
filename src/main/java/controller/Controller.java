@@ -13,480 +13,368 @@ import java.util.List;
 public class Controller {
     /**
      * Метод изменения блюда по его номеру
-     * @param i - номер блюда по его положению в списке
+     * @param numDish  - номер блюда по его положению в списке
      * @param dish - блюдо
-     * @param file - файл
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void setDataByNumber(int i,Dish dish,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            dishes.set(i,dish);
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void setDataByNumber(int numDish, Dish dish, List<Dish> dishes) {
+        dishes.set(numDish, dish);
     }
+
     /**
      * Метод изменения блюда по его названию
      * @param name - название блюда
      * @param dish - блюдо
-     * @param file - файл
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void setDataByName(String name,Dish dish,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            int i=0;
-            while(i<dishes.size()){
-                if(dishes.get(i).getName().equals(name)){
-                    dishes.set(i,dish);
-                    i= dishes.size();
-                }
-                i++;
+    public static void setDataByName(String name, Dish dish, List<Dish> dishes) {
+        int numDish = 0;
+        while (numDish < dishes.size()) {
+            if (dishes.get(numDish).getName().equals(name)) {
+                dishes.set(numDish, dish);
+                break;
             }
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            numDish++;
         }
     }
+
     /**
      * Метод изменения категории блюда по названию
      * @param name - название блюда
      * @param category - категория блюда
-     * @param file - файл
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void setCategoryByName(String name,Category category,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            Dish dish = new Dish(name,category,0);
-            int i=0;
-            while(i<dishes.size()){
-                if(dishes.get(i).getName().equals(dish.getName())){
-                    dishes.get(i).setCategory(dish.getCategory());
-                    i= dishes.size();
-                }
-                i++;
+    public static void setCategoryByName(String name, Category category, List<Dish> dishes) {
+        Dish dish = new Dish(name, category, 0);
+        int numDish = 0;
+        while (numDish < dishes.size()) {
+            if (dishes.get(numDish).getName().equals(dish.getName())) {
+                dishes.get(numDish).setCategory(dish.getCategory());
+                break;
             }
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            numDish++;
         }
     }
+
     /**
      * Метод изменения названия блюда по названию
      * @param name - название блюда
-     * @param nname- категория блюда
-     * @param file - файл
+     * @param newName- новое название блюда
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void setNameByName(String name,String nname,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            int i=0;
-            while(i<dishes.size()){
-                if(dishes.get(i).getName().equals(name)){
-                    dishes.get(i).setName(nname);
-                    i= dishes.size();
-                }
-                i++;
+    public static void setNameByName(String name, String newName, List<Dish> dishes) {
+        int numDish = 0;
+        while (numDish < dishes.size()) {
+            if (dishes.get(numDish).getName().equals(name)) {
+                dishes.get(numDish).setName(newName);
+                break;
             }
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            numDish++;
         }
     }
     /**
      * Метод изменения цены блюда по названию
-     * @param name - название блюда
+     * @param name  - название блюда
      * @param price - цена блюда
-     * @param file - файл
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void setPriceByName(String name,Double price,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            int i=0;
-            while(i<dishes.size()){
-                if(dishes.get(i).getName().equals(name)){
-                    dishes.get(i).setPrice(price);
-                    i= dishes.size();
-                }
-                i++;
+    public static void setPriceByName(String name, Double price, List<Dish> dishes) {
+        int numDish = 0;
+        while (numDish < dishes.size()) {
+            if (dishes.get(numDish).getName().equals(name)) {
+                dishes.get(numDish).setPrice(price);
+                break;
             }
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            numDish++;
         }
     }
+
     /**
      * Метод добавления блюда
-     * @param dish - блюдо
-     * @param file - файл
-     * @param file1 - файл категорий
+     * @param dish  - блюдо
+     * @param dishes - список блюд
+     * @param categories - список категорий
      * @return значение истина или ложь
      * @throws IOException
      */
-    public static boolean addData(Dish dish, File file, File file1) {
-        try {
-            if (file.length()!=0) {
-                List<Dish> dishes = Serialize.deserialize(file);
-                if(compare1(dishes,dish)) {
-                    dishes.add(dish);
-                    for(int i = 0;i< dishes.size();i++) {
-                        addCategory(dishes.get(i).getCategory(), file1);
-                    }
-                    Serialize.serialize(dishes, file);
-                    return  true;
-                }
-                else{return false;}
-            }else {
-                List<Dish>dishes= List.of(dish);
-                Serialize.serialize(dishes, file);
-                addCategory(dish.getCategory(),file1);
-                return true;
+    public static boolean addData(Dish dish, List<Dish> dishes, List<Category> categories) {
+        if (compareDishes(dishes, dish)) {
+            dishes.add(dish);
+            for (int i = 0; i < dishes.size(); i++) {
+                addCategory(dishes.get(i).getCategory(), categories);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return true;
+        } else {
             return false;
         }
     }
+
     /**
      * Метод добавления категорий из файла
-     * @param file - файл
-     * @param file1 - файл категорий
+     * @param dishes - список блюд
+     * @param categories - список категорий
      * @return значение истина или ложь
      * @throws IOException
      */
-    public static boolean addCategoryByDish(File file, File file1) {
-        try {
-            if (file.length()!=0) {
-                List<Dish> dishes = Serialize.deserialize(file);
-                for(int i = 0;i< dishes.size();i++) {
-                    addCategory(dishes.get(i).getCategory(), file1);
-                }
-                return  true;
-            }else {
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+    public static void addCategoryByDish(List<Dish> dishes, List<Category> categories) {
+        for (int i = 0; i < dishes.size(); i++) {
+            addCategory(dishes.get(i).getCategory(), categories);
         }
     }
+
     /**
      * Метод удаления блюда по его названию
      * @param name - название блюда
-     * @param file - файл
+     * @param dishes - список блюд
      * @throws IOException
      */
-    public static void deleteData(String name, File file) {
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            int i=0;
-            while(i<dishes.size()){
-                if(dishes.get(i).getName().equals(name)){
-                    dishes.remove(i);
-                    i= dishes.size();
-                }
-                i++;
+    public static void deleteData(String name, List<Dish> dishes) {
+        int numDish = 0;
+        while (numDish < dishes.size()) {
+            if (dishes.get(numDish).getName().equals(name)) {
+                dishes.remove(numDish);
+                break;
             }
-            Serialize.serialize(dishes,file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            numDish++;
         }
     }
+
     /**
      * Метод просмотра данных
-     * @param file - файл
+     * @param dishes - список блюд
      * @return возвращает строку содержащую список блюд
      * @throws IOException
      */
-    public static String print(File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            String s="" + '\n';
-            int k=1;
-            for(int i=0;i<dishes.size();i++) {
-
-                s += k + "  ";
-                s += dishes.get(i).getName() + "\n";
-                s += "Категория:  ";
-                s += dishes.get(i).getCategory().getNameCategory() + "\n";
-                s += "Цена:  ";
-                s += dishes.get(i).getPrice() + "\n";
-                k++;
-            }
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+    public static StringBuffer printDish (List<Dish> dishes) {
+        StringBuffer resultString = new StringBuffer();
+        int numDish = 1;
+        for (int i = 0; i < dishes.size(); i++) {
+            resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
+                    + dishes.get(i).getCategory().getNameCategory() + "*"
+                    + dishes.get(i).getPrice() + "\n");
+            numDish++;
         }
+        return resultString;
     }
+
     /**
      * Метод проверки данных
-     * @param o1 - блюдо одного из файлов
-     * @param o2 - блюдо из другого файла
+     * @param dish - блюдо одного из файлов
+     * @param otherDish - блюдо из другого файла
      * @return возвращает значение истина или ложь
      */
-    private static boolean compare(Dish o1,Dish o2){
-        if(o1.getName().equals(o2.getName())){
+    private static boolean compareDish(Dish dish, Dish otherDish) {
+        if (dish.getName().equals(otherDish.getName())) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
+
     /**
      * Метод проверки данных из другого файла
-     * @param o1 - меню одного из файлов
-     * @param o2 - блюдо из другого файла
+     * @param dishes - меню одного из файлов
+     * @param dish - блюдо из другого файла
      * @return возвращает значение истина или ложь
      */
-    private static boolean compare1(List<Dish> o1,Dish o2){
-        int i=0;
-        boolean bool=true;
-        while(i<o1.size() && bool){
-            bool=compare(o1.get(i),o2);
-            i++;
+    private static boolean compareDishes(List<Dish> dishes, Dish dish) {
+        int numDish = 0;
+        boolean bool = true;
+        while (numDish < dishes.size() && bool) {
+            bool = compareDish(dishes.get(numDish), dish);
+            numDish++;
         }
         return bool;
     }
+
     /**
      * Метод добавления данных из другого файла
-     * @param file - файл для добавления данных
-     * @param file1 - файл
+     * @param dishes - список блюд
+     * @param otherDishes - список блюд из другого файла
      * @return возвращает значение истина или ложь
      * @throws IOException
      */
-    public static boolean addFile(File file,File file1){
-        try {
-            if(file.length()!=0 && file1.length()!=0) {
-                boolean bool = false;
-                List<Dish> dishes = Serialize.deserialize(file);
-                List<Dish> dishes1 = Serialize.deserialize(file1);
-                int i = 0;
-                while (i < dishes1.size()) {
-                    if(dishes.add(dishes1.get(i))) {
-                        bool = true;
-                    }
-                    i++;
+    public static boolean addFile(List<Dish> dishes, List<Dish> otherDishes) {
+        if (dishes.size() != 0 && otherDishes.size() != 0) {
+            boolean changeTest = false;
+            int numDish = 0;
+            while (numDish < otherDishes.size()) {
+                if (dishes.add(otherDishes.get(numDish))) {
+                    changeTest = true;
                 }
-                Serialize.serialize(dishes, file);
-                return bool;
-            }else {
-                if(file1.length()!=0){
-                    List<Dish> dishes = Serialize.deserialize(file1);
-                    Serialize.serialize(dishes, file);
-                    return true;
-                }
-                return false;
+                numDish++;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return changeTest;
+        } else {
+            if (otherDishes.size() != 0) {
+                dishes = otherDishes;
+                return true;
+            }
             return false;
         }
     }
+
     /**
      * Метод проверки данных
-     * @param o1 - категория
-     * @param o2 - категория
+     * @param category - категория
+     * @param otherCategory - категория
      * @return возвращает значение истина или ложь
      */
-    private static boolean compare(Category o1,Category o2){
-        if(o1.getNameCategory().equals(o2.getNameCategory())){
+    private static boolean compareCategory(Category category, Category otherCategory) {
+        if (category.getNameCategory().equals(otherCategory.getNameCategory())) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
+
     /**
      * Метод проверки данных из другого файла
-     * @param o1 - лист категорий
-     * @param o2 - категория
+     * @param categories - лист категорий
+     * @param category - категория
      * @return возвращает значение истина или ложь
      */
-    private static boolean compare1(List<Category> o1,Category o2){
-        int i=0;
-        boolean bool=true;
-        while(i<o1.size() && bool){
-            bool=compare(o1.get(i),o2);
-            i++;
+    public static boolean compareCategories(List<Category> categories, Category category) {
+        int numCategory = 0;
+        boolean changeTest = true;
+        while (numCategory < categories.size() && changeTest) {
+            changeTest = compareCategory(categories.get(numCategory), category);
+            numCategory++;
         }
-        return bool;
+        return changeTest;
     }
+
     /**
      * Метод добавления категории
      * @param category - категория
-     * @param file - файл
+     * @param categories - список категорий
      * @return возвращает значение истина или ложь
      * @throws IOException
      */
-    public static boolean addCategory(Category category, File file) {
-        try {
-            if (file.length()!=0) {
-                List<Category> categories = Serialize.deserializeCategory(file);
-                if(compare1(categories,category)) {
-                    categories.add(category);
-                    Serialize.serializeCategory(categories, file);
-                    return  true;
-                }
-                else{ return false;}
-            }else {
-                List<Category> categories= List.of(category);
-                Serialize.serializeCategory(categories, file);
-                return  true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static boolean addCategory(Category category, List<Category> categories) {
+        if (compareCategories(categories, category)) {
+            categories.add(category);
+            return true;
+        } else {
             return false;
         }
     }
+
     /**
      * Метод просмотра данных по категории
      * @param category - название категории
-     * @param file -файл
+     * @param dishes - список блюд
      * @return возвращает строку содержащую список блюд
      * @throws IOException
      */
-    public static String print(String category,File file){
-        try {
-            List<Dish> dishes=Serialize.deserialize(file);
-            String s="" + '\n';
-            int k=1;
-            for(int i=0;i<dishes.size();i++){
-                if(dishes.get(i).getCategory().getNameCategory().equals(category)){
-                    s+=k+"  ";
-                    s+=dishes.get(i).getName()+ "\n";
-                    s+="Категория:  ";
-                    s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
-                    s+="Цена:  ";
-                    s+=dishes.get(i).getPrice()+ "\n";
-                    k++;
-                }
+    public static StringBuffer printDishByCategory(String category, List<Dish> dishes) {
+        StringBuffer resultString = new StringBuffer();
+        int numDish = 1;
+        for (int i = 0; i < dishes.size(); i++) {
+            if (dishes.get(i).getCategory().getNameCategory().equals(category)) {
+                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
+                        + dishes.get(i).getCategory().getNameCategory() + "*"
+                        + dishes.get(i).getPrice() + "\n");
+                numDish++;
             }
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
+        return resultString;
     }
+
     /**
      * Метод просмотра категорий
-     * @param file - файл категорий
+     * @param categories - список категорий
      * @return возвращает строку содержащую список категорий
      * @throws IOException
      */
-    public static String printCategory(File file){
-        try {
-            List<Category> categories=Serialize.deserializeCategory(file);
-            String s="";
-            for(int i=0;i<categories.size();i++){
-                    s+=categories.get(i).toString();
-                    s+='\n';
-            }
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+    public static StringBuffer printCategory(List<Category> categories) {
+        StringBuffer resultString = new StringBuffer();
+        for (int i = 0; i < categories.size(); i++) {
+            resultString.append(categories.get(i).toString() + "\n");
         }
+        return resultString;
     }
 
     /**
      * Метод поиска данных по названию
      * @param name - название блюда
-     * @param file - файл
+     * @param dishes - список блюд
      * @return возвращает строку, содержащую все блюда, подходящие под шаблон названия
      * @throws IOException
      */
-    public static String getDataByName(String name,File file){
-        try {
-            String s="";
-            char[] t=name.toCharArray();
-            List<Dish> dishes = Serialize.deserialize(file);
-            int j=1;
-            for(int i=0;i<dishes.size();i++){
-                int n=0,k=0; boolean bool=false;
-                while(n<t.length) {
-                    if (t[n] == '*' || t[n] == '?') {
-                        n++;
-                    }
-                    else{
-                        bool=false;
-                        while (k<dishes.get(i).getName().length() && !bool){
-                            char [] d =dishes.get(i).getName().toCharArray();
-                            if(t[n] == d[k]){
-                                bool=true;
-                            }
-                            k++;
+    public static StringBuffer getDataByName(String name, List<Dish> dishes) {
+        StringBuffer resultString = new StringBuffer();
+        char[] arrayName = name.toCharArray();
+        int numDish = 1;
+        for (int i = 0; i < dishes.size(); i++) {
+            int numArrayName = 0, numDishName = 0;
+            boolean checkEqual = false;
+            while (numArrayName < arrayName.length) {
+                if (arrayName[numArrayName] == '*' || arrayName[numArrayName] == '?') {
+                    numArrayName++;
+                } else {
+                    checkEqual = false;
+                    while (numDishName < dishes.get(i).getName().length() && !checkEqual) {
+                        char[] d = dishes.get(i).getName().toCharArray();
+                        if (arrayName[numArrayName] == d[numDishName]) {
+                            checkEqual = true;
                         }
-                        n++;
+                        numDishName++;
                     }
-                }
-                if (bool){
-                    s+=j+"  ";
-                    s+=dishes.get(i).getName()+ "\n";
-                    s+="Категория:  ";
-                    s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
-                    s+="Цена:  ";
-                    s+=dishes.get(i).getPrice()+ "\n";
-                    j++;
-                    s+='\n';
+                    numArrayName++;
                 }
             }
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            if (checkEqual) {
+                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
+                        + dishes.get(i).getCategory().getNameCategory() + "*"
+                        + dishes.get(i).getPrice() + '\n');
+                numDish++;
+            }
         }
+        return resultString;
     }
+
     /**
      * Метод поиска данных по категории
      * @param category - название категории
-     * @param file - файл
+     * @param dishes - список блюд
      * @return возвращает строку, содержащую все блюда, подходящие под шаблон категории
      * @throws IOException
      */
-    public static String getDataByCategory(String category,File file){
-        try {
-            String s="";
-            char[] t=category.toCharArray();
-            List<Dish> dishes = Serialize.deserialize(file);
-            int j=1;
-            for(int i=0;i<dishes.size();i++){
-                int n=0,k=0; boolean bool=false;
-                while(n<t.length) {
-                    if (t[n] == '*' || t[n] == '?') {
-                        n++;
-                    }
-                    else{
-                        bool=false;
-                        while (k<dishes.get(i).getCategory().getNameCategory().length() && !bool){
-                            char [] d =dishes.get(i).getCategory().getNameCategory().toCharArray();
-                            if(t[n] == d[k]){
-                                bool=true;
-                            }
-                            k++;
+    public static StringBuffer getDataByCategory(String category, List<Dish> dishes) {
+        StringBuffer resultString = new StringBuffer();
+        char[] arrayCategoryName = category.toCharArray();
+        int numDish = 1;
+        for (int i = 0; i < dishes.size(); i++) {
+            int numArrayCategoryName = 0, numDishCategory = 0;
+            boolean bool = false;
+            while (numArrayCategoryName < arrayCategoryName.length) {
+                if (arrayCategoryName[numArrayCategoryName] == '*' || arrayCategoryName[numArrayCategoryName] == '?') {
+                    numArrayCategoryName++;
+                } else {
+                    bool = false;
+                    while (numDishCategory < dishes.get(i).getCategory().getNameCategory().length() && !bool) {
+                        char[] d = dishes.get(i).getCategory().getNameCategory().toCharArray();
+                        if (arrayCategoryName[numArrayCategoryName] == d[numDishCategory]) {
+                            bool = true;
                         }
-                        n++;
+                        numDishCategory++;
                     }
-                }
-                if (bool){
-                    s+=j+"  ";
-                    s+=dishes.get(i).getName()+ "\n";
-                    s+="Категория:  ";
-                    s+=dishes.get(i).getCategory().getNameCategory()+ "\n";
-                    s+="Цена:  ";
-                    s+=dishes.get(i).getPrice()+ "\n";
-                    j++;
-                    s+='\n';
+                    numArrayCategoryName++;
                 }
             }
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            if (bool) {
+                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
+                        + dishes.get(i).getCategory().getNameCategory() + "*"
+                        + dishes.get(i).getPrice() + '\n');
+                numDish++;
+            }
         }
+        return resultString;
     }
-
 }
