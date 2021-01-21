@@ -33,11 +33,11 @@ public class Server {
         /**
          * поле для списка блюд
          */
-        private List<Dish> dishes;
+        public List<Dish> dishes;
         /**
          * поле для списка категорий
          */
-        private List<Category> categories;
+        public List<Category> categories;
 
         /**
          * конструктор - создание потока
