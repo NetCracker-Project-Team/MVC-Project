@@ -24,14 +24,12 @@ public class Client {
             client.out.flush();
             System.out.println("Отправка команды \"" + clientCommand + "\" на сервер...");
             Thread.sleep(1000);
-            System.out.println("reading...");
+            System.out.println("Получаем ответ от сервера...");
             String in = client.dis.readUTF();
             System.out.println("Ответ с сервера: " + in);
-            System.out.println("Завершение работы клиентской стороны...");
 
-        } else {
-            System.out.println("Завершение работы клиентской стороны...");
         }
+        System.out.println("Завершение работы клиентской стороны...");
     }
 
 
