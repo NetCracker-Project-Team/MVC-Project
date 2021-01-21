@@ -1,4 +1,6 @@
-import javafx.stage.FileChooser;
+package view;
+
+import Client.Client;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -21,7 +23,7 @@ public class ViewSwing extends JFrame {
      * Конструктор - создает клиент и запускает программу
      */
     ViewSwing() throws IOException {
-        client = new Client();
+        client = new Client(8000);
         begin();
     }
 
