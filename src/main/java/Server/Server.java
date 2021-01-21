@@ -20,15 +20,19 @@ public class Server {
      * интерфейс управления потоками
      */
     static ExecutorService executeIt = Executors.newCachedThreadPool();
-    private final static int serverPort = 8000;
+    private int serverPort;
+
+    public Server(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
 
     public static void main(String[] args) {
+        Server server = new Server(8000);
         try {
-            ServerSocket server = new ServerSocket(serverPort);
-            Socket serverClient = server.accept();
+            ServerSocket serverSocket = new ServerSocket(server.serverPort);
+            Socket serverClient = serverSocket.accept();
             executeIt.execute(new ServerRun(serverClient));
-            server.close();
-            executeIt.shutdown();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -80,15 +84,14 @@ public class Server {
                         categories = List.of(dishes.get(0).getCategory());
                         Controller.addCategoryByDish(dishes, categories);
                         out.writeUTF("not");
-                        out.flush();
                     } else {
                         out.writeUTF("empty");
-                        out.flush();
                     }
                 } else {
                     out.writeUTF("empty");
-                    out.flush();
                 }
+                out.flush();
+
                 while (!clientSocket.isClosed()) {
                     if (dataModifFile != 0) {
                         if (dataModifFile != file.lastModified()) {
@@ -179,11 +182,10 @@ public class Server {
                             nameCategory = in.readUTF();
                             if (Controller.addCategory(new Category(nameCategory), categories)) {
                                 out.writeUTF("Yes");
-                                out.flush();
                             } else {
                                 out.writeUTF("No");
-                                out.flush();
                             }
+                            out.flush();
                         case "printDishByCategory":
                             nameCategory = in.readUTF();
                             out.writeUTF(Controller.printDishByCategory(nameCategory, dishes).toString());

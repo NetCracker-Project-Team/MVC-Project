@@ -1,4 +1,3 @@
-import view.View;
 
 import java.io.IOException;
 
@@ -15,8 +14,6 @@ public class Main {
         //Сериализация  десериализация
         Controller.Serialize.serialize(dishes,file);
         System.out.println(Controller.Serialize.deserialize(file));*/
-
-        View.mainMenu();
 
     }
 }

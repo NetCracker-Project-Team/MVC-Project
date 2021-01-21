@@ -1,3 +1,4 @@
+/*
 package view;
 
 import controller.*;
@@ -7,45 +8,63 @@ import model.Dish;
 import java.io.*;
 import java.util.Scanner;
 
+*/
 /**
  * Класс - представление
- */
+ *//*
+
 public class View {
 
-    /**
+    */
+/**
      * Поле для сканнера
-     */
+     *//*
+
     private static Scanner in = new Scanner(System.in);
-    /**
+    */
+/**
      * Поле для правила выбора пунктов меню
-     */
+     *//*
+
     private static String selectionRule = " *выберите пункт меню, чтобы вы хотели сделать";
-    /**
+    */
+/**
      * Поле для выбора пункта меню пользователем
-     */
+     *//*
+
     private static String selection;
-    /**
+    */
+/**
      * Поле для неправильного выбора пункта меню
-     */
+     *//*
+
     private static String wrongChoice = "\n\t!!Вы неправильно выбрали пункт меню!!";
-    /**
+    */
+/**
      * Поле для пустого меню
-     */
+     *//*
+
     private static String emptyMenu = "\n\tВы не можете выполнить операцию. Так как меню пустое!\n" +
             "\tПопробуйте снова.";
-    /**
+    */
+/**
      * Поле для файла блюд
-     */
+     *//*
+
     private static File file;
-    /**
+    */
+/**
      * Поле для файла категорий
-     */
+     *//*
+
     private static File fileCategory;
 
 
-    /**
+    */
+/**
      * Метод главного меню
-     */
+     *//*
+
     public static void mainMenu() {
         System.out.println(selectionRule);
         System.out.println("\n\t\t---Главное меню:---");
@@ -111,11 +130,13 @@ public class View {
         }
     }
 
-    /**
+    */
+/**
      * Метод для загрузки меню ресторана
      *
      * @throws IOException
-     */
+     *//*
+
     private static void download(int k) {
         System.out.println("\n\t\t---Загрузка меню ресторона---");
         try {
@@ -141,11 +162,13 @@ public class View {
 
     }
 
-    /**
+    */
+/**
      * Метод для сохранения меню ресторона в выбранный файл
      *
      * @throws IOException
-     */
+     *//*
+
     private static void save() {
         System.out.println("\n\t\t---Сохранение меню ресторона---");
         System.out.print("\nПуть к файлу: ");
@@ -172,9 +195,11 @@ public class View {
         }
     }
 
-    /**
+    */
+/**
      * Метод просмотра меню ресторана
-     */
+     *//*
+
     private static void showMenu() {
         System.out.println("\n\t\tПросмотр данных:\n" +
                 "\t1 - меню ресторана\n" +
@@ -202,9 +227,11 @@ public class View {
         else mainMenu();
     }
 
-    /**
+    */
+/**
      * Метод добавления блюда
-     */
+     *//*
+
     private static void newDish() {
         System.out.println("\n\t\tДобавление данных:\n" +
                 "\t1 - добавить блюдо\n" +
@@ -250,45 +277,63 @@ public class View {
         else mainMenu();
     }
 
-    /**
+    */
+/**
      * Класс - представление
-     */
+     *//*
+
     public static class View {
 
-        /**
+        */
+/**
          * Поле для сканнера
-         */
+         *//*
+
         private static Scanner in = new Scanner(System.in);
-        /**
+        */
+/**
          * Поле для правила выбора пунктов меню
-         */
+         *//*
+
         private static String selectionRule = " *выберите пункт меню, чтобы вы хотели сделать";
-        /**
+        */
+/**
          * Поле для выбора пункта меню пользователем
-         */
+         *//*
+
         private static String selection;
-        /**
+        */
+/**
          * Поле для неправильного выбора пункта меню
-         */
+         *//*
+
         private static String wrongChoice = "\n\t!!Вы неправильно выбрали пункт меню!!";
-        /**
+        */
+/**
          * Поле для пустого меню
-         */
+         *//*
+
         private static String emptyMenu = "\n\tВы не можете выполнить операцию. Так как меню пустое!\n" +
                 "\tПопробуйте снова.";
-        /**
+        */
+/**
          * Поле для файла блюд
-         */
+         *//*
+
         private static File file;
-        /**
+        */
+/**
          * Поле для файла категорий
-         */
+         *//*
+
         private static File fileCategory;
 
 
-        /**
+        */
+/**
          * Метод главного меню
-         */
+         *//*
+
         public static void mainMenu() {
             System.out.println(selectionRule);
             System.out.println("\n\t\t---Главное меню:---");
@@ -354,11 +399,13 @@ public class View {
             }
         }
 
-        /**
+        */
+/**
          * Метод для загрузки меню ресторана
          *
          * @throws IOException
-         */
+         *//*
+
         private static void download(int k) {
             System.out.println("\n\t\t---Загрузка меню ресторона---");
             try {
@@ -384,11 +431,13 @@ public class View {
 
         }
 
-        /**
+        */
+/**
          * Метод для сохранения меню ресторона в выбранный файл
          *
          * @throws IOException
-         */
+         *//*
+
         private static void save() {
             System.out.println("\n\t\t---Сохранение меню ресторона---");
             System.out.print("\nПуть к файлу: ");
@@ -415,9 +464,11 @@ public class View {
             }
         }
 
-        /**
+        */
+/**
          * Метод просмотра меню ресторана
-         */
+         *//*
+
         private static void showMenu() {
             System.out.println("\n\t\tПросмотр данных:\n" +
                     "\t1 - меню ресторана\n" +
@@ -444,9 +495,11 @@ public class View {
             mainMenu();
         }
 
-        /**
+        */
+/**
          * Метод добавления блюда
-         */
+         *//*
+
         private static void newDish() {
             System.out.println("\n\t\tДобавление данных:\n" +
                     "\t1 - добавить блюдо\n" +
@@ -492,9 +545,11 @@ public class View {
             else mainMenu();
         }
 
-        /**
+        */
+/**
          * Метод редактирования меню ресторана
-         */
+         *//*
+
         private static void editMenu() {
             System.out.println(selectionRule);
             System.out.println("\n\t\t---Редактор блюд в ресторане:---");
@@ -566,12 +621,14 @@ public class View {
             else mainMenu();
         }
 
-        /**
+        */
+/**
          * Метод ввода имени
          *
          * @param s - строка для ввода
          * @param k - показывает, что вводится( 0 - название блюда, 1 - названик категории, 2 - новое название блюда, 3 - новое название категории)
-         */
+         *//*
+
         private static String inputName(String s, int k) {
             System.out.print(s);
             String name = in.next();
@@ -588,11 +645,13 @@ public class View {
             return null;
         }
 
-        /**
+        */
+/**
          * Метод ввода цены блюда
          *
          * @throws Exception
-         */
+         *//*
+
         private static double inputPrice() {
             System.out.print("Цена блюда: ");
             try {
@@ -610,11 +669,13 @@ public class View {
             return -1;
         }
 
-        /**
+        */
+/**
          * Метод ввода номера блюда
          *
          * @throws Exception
-         */
+         *//*
+
         private static int inputNumber(String s) {
             System.out.print(s);
             try {
@@ -633,9 +694,11 @@ public class View {
             return -1;
         }
 
-        /**
+        */
+/**
          * Метод поиска данных
-         */
+         *//*
+
         private static void search() {
             System.out.println("\n\t\tПoиск данных:\n" +
                     "\t1 - поиск блюда\n" +
@@ -671,3 +734,4 @@ public class View {
         }
     }
 }
+*/

@@ -4,39 +4,48 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client {
-    private int socketPort;
-    private final String socketHost = "localhost";
     private Socket clientSocket;
     private DataInputStream dis;
     private DataOutputStream out;
-    private BufferedReader reader =new BufferedReader(new InputStreamReader(System.in));
+    private final BufferedReader reader =new BufferedReader(new InputStreamReader(System.in));
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Client client = new Client(8000);
-        while (client.clientSocket.isOutputShutdown()) {
-            if (client.reader.ready()) {
-                System.out.println("Введите команду: ");
-                String clientCommand = client.reader.readLine();
-                client.out.writeUTF(clientCommand);
-                client.out.flush();
-                System.out.println("Отправка команды \"" + clientCommand + "\" на сервер...");
-                Thread.sleep(1000);
-            }
+        Client client = null;
+        try {
+            client = new Client(8000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(client!=null) {
+            System.out.println("Введите команду: ");
+            String clientCommand = client.reader.readLine();
+            client.out.writeUTF(clientCommand);
+            client.out.flush();
+            System.out.println("Отправка команды \"" + clientCommand + "\" на сервер...");
+            Thread.sleep(1000);
+            System.out.println("reading...");
+            String in = client.dis.readUTF();
+            System.out.println("Ответ с сервера: " + in);
+            System.out.println("Завершение работы клиентской стороны...");
+
+        } else {
+            System.out.println("Завершение работы клиентской стороны...");
         }
     }
 
+
     public Client(int socketPort) {
-        this.socketPort = socketPort;
         try {
+            String socketHost = "localhost";
             clientSocket = new Socket(socketHost, socketPort);
             dis = new DataInputStream(clientSocket.getInputStream());
             out = new DataOutputStream(clientSocket.getOutputStream());
+            System.out.println("Клиент успешно создан на порту " + socketPort);
         } catch (IOException exception) {
             exception.printStackTrace();
             System.err.println("Ошибка при создании клиента!");
         }
-        System.out.println("Клиент успешно создан на порту " + socketPort);
     }
 
 
