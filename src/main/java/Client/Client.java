@@ -12,22 +12,24 @@ public class Client {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Client client = null;
+        String clientCommand = "";
         try {
             client = new Client(8000);
         } catch (Exception e) {
             e.printStackTrace();
         }
         if(client!=null) {
-            System.out.println("Введите команду: ");
-            String clientCommand = client.reader.readLine();
-            client.out.writeUTF(clientCommand);
-            client.out.flush();
-            System.out.println("Отправка команды \"" + clientCommand + "\" на сервер...");
-            Thread.sleep(1000);
-            System.out.println("Получаем ответ от сервера...");
-            String in = client.dis.readUTF();
-            System.out.println("Ответ с сервера: " + in);
-
+            while (!clientCommand.equals("stop")) {
+                System.out.println("Введите команду: ");
+                clientCommand = client.reader.readLine();
+                client.out.writeUTF(clientCommand);
+                client.out.flush();
+                System.out.println("Отправка команды \"" + clientCommand + "\" на сервер...");
+                Thread.sleep(1000);
+                System.out.println("Получаем ответ от сервера...");
+                String in = client.dis.readUTF();
+                System.out.println("Ответ с сервера: " + in);
+            }
         }
         System.out.println("Завершение работы клиентской стороны...");
     }
@@ -77,5 +79,8 @@ public class Client {
         out.writeUTF(nameMethod);
         out.writeUTF(data1);
         out.writeUTF(data2);
+    }
+    private boolean isModified(String responseFromServer) {
+        return responseFromServer.equals("Yes");
     }
 }
