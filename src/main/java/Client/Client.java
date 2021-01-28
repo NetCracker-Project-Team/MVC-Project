@@ -80,6 +80,11 @@ public class Client {
         out.writeUTF(data1);
         out.writeUTF(data2);
     }
+
+    public void printDishByCategory(String nameMethod, String category) {
+
+    }
+
     private boolean isModified(String responseFromServer) {
         return responseFromServer.equals("Yes");
     }
