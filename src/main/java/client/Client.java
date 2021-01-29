@@ -50,8 +50,10 @@ public class Client {
 
 
 
-   public String file(String nameFile) throws IOException {
-        out.writeUTF(nameFile);
+    public String file(String nameFile) throws IOException {
+        //Serialize.compressionFile(nameFile,nameFile.replace(".json",".dz"));
+        //Serialize.serializeDZIP(nameFile.replace(".json",".dz"),out);
+       out.writeUTF(nameFile);
         return dis.readUTF();
     }
     public String addFile(String method, String nameFile) throws IOException {
@@ -62,9 +64,7 @@ public class Client {
     }
 
     public String print(String nameMethod) throws IOException {
-        if (clientSocket.isOutputShutdown()) {
-            return "stop";
-        }
+
         dis.readUTF();
         out.writeUTF(nameMethod);
         return dis.readUTF();
@@ -94,7 +94,7 @@ public class Client {
         if (clientSocket.isOutputShutdown())  {
             return;
         }
-
+        dis.readUTF();
         out.writeUTF(nameMethod);
         out.writeUTF(data);
     }
@@ -112,12 +112,23 @@ public class Client {
     }
 
     public void setData(String nameMethod, String data1, String data2) throws IOException {
+        dis.readUTF();
         if (clientSocket.isOutputShutdown()) {
             return;
         }
         out.writeUTF(nameMethod);
         out.writeUTF(data1);
         out.writeUTF(data2);
+    }
+
+    public void setData(String nameMethod, String data1, Double data2) throws IOException {
+        dis.readUTF();
+        if (clientSocket.isOutputShutdown()) {
+            return;
+        }
+        out.writeUTF(nameMethod);
+        out.writeUTF(data1);
+        out.writeDouble(data2);
     }
 
     public String addData(String nameMethod, Dish dish) throws IOException {
