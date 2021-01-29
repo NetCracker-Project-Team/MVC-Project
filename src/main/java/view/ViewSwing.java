@@ -4,6 +4,7 @@ import Client.Client;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
@@ -95,6 +96,7 @@ public class ViewSwing extends JFrame {
         }
     }
 
+
     /**
      * Метод с меню
      */
@@ -121,6 +123,11 @@ public class ViewSwing extends JFrame {
         JButton edit = new JButton("Редактировать меню");
         edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                try {
+                    edit();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
 
             }
         });
@@ -512,11 +519,6 @@ public class ViewSwing extends JFrame {
     }
 
     private void search(){
-        frame.setVisible(false);
-        frame = new JFrame("Меню");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(300, 300));
-
         JPanel plain = new JPanel();
 
         plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
@@ -585,15 +587,13 @@ public class ViewSwing extends JFrame {
 
         plain.add(cancel);
 
-        frame.add(plain);
-        frame.pack();
-
-        frame.setVisible(true);
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
     }
 
     private void save(){
-        frame.getContentPane().removeAll();
-
         JPanel plain = new JPanel();
 
         plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
@@ -634,10 +634,107 @@ public class ViewSwing extends JFrame {
 
         plain.add(cancel);
 
-        frame.add(plain);
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void edit() throws IOException {
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        Object[] columnsHeader = new String[] {"№","Блюдо", "Категория", "Цена"};
+        String ff =  client.print("printDish");
+        String[] dish_arr =ff.split("\\*");
+        Object[][] array = new String[dish_arr.length/4][4];
+        Object[][] arrayCopy = new String[dish_arr.length/4][4];
+        for (int i = 0; i < dish_arr.length/4;i++){
+            for (int k = 0; k < 4; k ++){
+                array[i][k] = dish_arr[i*4+k];
+                arrayCopy[i][k] = dish_arr[i*4+k];
+            }
+        }
+        DefaultTableModel model = new DefaultTableModel(array, columnsHeader);
+        // Таблица с настройками
+        JTable table = new JTable(model);
+        table.setFillsViewportHeight(true);
+        JScrollPane table_scroll = new JScrollPane(table);
+        table_scroll.setPreferredSize(new Dimension(500,300));
+        plain.add(table_scroll);
+
+        JButton edit = new JButton("Сохранить изменения");
+        edit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    for (int i = 0; i < dish_arr.length/4; i ++){
+                        for (int k = 1; k < 4; k++){
+                            if (!array[i][k].equals(arrayCopy[i][k])){
+                                if (k == 1) {
+                                    client.setData("setNameByName",arrayCopy[i][1].toString(), array[i][k].toString());
+                                } else if (k == 2) {
+                                    client.setData("setCategoryByName",arrayCopy[i][1].toString(), array[i][k].toString());
+                                } else if (k == 3) {
+                                    client.setData("setPriceByName",arrayCopy[i][1].toString(),Double.parseDouble(array[i][k].toString()));
+                                }
+                            }
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Изменение прошло успешно!");
+                    frame.getContentPane().removeAll();
+                    frame.getContentPane().invalidate();
+                    edit();
+                }catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(edit);
+
+        JButton discard = new JButton("Сбросить");
+        discard.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    edit();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(discard);
+
+        JButton delete = new JButton("Удалить выделенную строку");
+        delete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int idx = table.getSelectedRow();
+                    model.removeRow(idx);
+                    client.setData("deleteData",array[idx][1].toString());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(delete);
+
+
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
     }
 
     public static void main (String [] args) throws IOException {
+
         ViewSwing windowApplication = new ViewSwing();
     }
 }
