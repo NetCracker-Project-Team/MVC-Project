@@ -50,7 +50,13 @@ public class Client {
 
 
 
-    public String file(String nameFile) throws IOException {
+   public String file(String nameFile) throws IOException {
+        out.writeUTF(nameFile);
+        return dis.readUTF();
+    }
+    public String addFile(String method, String nameFile) throws IOException {
+        dis.readUTF();
+        out.writeUTF(method);
         out.writeUTF(nameFile);
         return dis.readUTF();
     }
@@ -59,9 +65,30 @@ public class Client {
         if (clientSocket.isOutputShutdown()) {
             return "stop";
         }
+        dis.readUTF();
         out.writeUTF(nameMethod);
         return dis.readUTF();
     }
+
+    public String print(String nameMethod, String data) throws IOException {
+
+        dis.readUTF();
+        out.writeUTF(nameMethod);
+        out.writeUTF(data);
+        return dis.readUTF();
+    }
+
+    public void save(String nameMethod) throws IOException {
+        dis.readUTF();
+        out.writeUTF(nameMethod);
+    }
+
+    public void save(String nameMethod, String data) throws IOException {
+        dis.readUTF();
+        out.writeUTF(nameMethod);
+        out.writeUTF(data);
+    }
+
 
     public void setData(String nameMethod, String data) throws IOException {
         if (clientSocket.isOutputShutdown())  {
@@ -70,6 +97,18 @@ public class Client {
 
         out.writeUTF(nameMethod);
         out.writeUTF(data);
+    }
+
+    public void setData(String nameMethod, String data, String data2, String data3) throws IOException {
+        if (clientSocket.isOutputShutdown())  {
+            return;
+        }
+
+        out.writeUTF(nameMethod);
+        out.writeUTF(data);
+        out.writeUTF(data2);
+        out.writeUTF(data3);
+        dis.readUTF();
     }
 
     public void setData(String nameMethod, String data1, String data2) throws IOException {
@@ -81,8 +120,18 @@ public class Client {
         out.writeUTF(data2);
     }
 
-    public void printDishByCategory(String nameMethod, String category) {
+    public String addData(String nameMethod, Dish dish) throws IOException {
+        dis.readUTF();
+        out.writeUTF(nameMethod);
+        Serialize.serializeDish(dish,out);
+        return dis.readUTF();
+    }
 
+    public String addData(String nameMethod, String data) throws IOException {
+        dis.readUTF();
+        out.writeUTF(nameMethod);
+        out.writeUTF(data);
+        return dis.readUTF();
     }
 
     private boolean isModified(String responseFromServer) {
