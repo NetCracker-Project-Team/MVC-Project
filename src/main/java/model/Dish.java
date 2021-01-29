@@ -3,7 +3,7 @@ package model;
 /**
  * Класс - модель блюд со свойствами <b>name</b>, <b>category</b>,</b> и <b>price</b>.
  */
-public class Dish {
+public class Dish implements Serializable {
     /** Поле название блюда */
     private String name;
     /** Поле категория блюда {@link Category} */
