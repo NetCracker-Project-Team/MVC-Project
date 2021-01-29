@@ -87,5 +87,89 @@ public class Serialize {
             return null;
         }
     }
+    /**
+     * Метод сжатия файла с помощью GZIP
+     * @param nameFile - имя файла
+     * @param nameGZIPFile - имя файла GZIP
+     */
+    public static void compressionFile (String nameFile,String nameGZIPFile){
+        try {
+            FileInputStream fileInputStream = new FileInputStream(nameFile);
+            FileOutputStream fileOutputStream = new FileOutputStream(nameGZIPFile);
+            GZIPOutputStream gzipOutputStream = new GZIPOutputStream(fileOutputStream);
+            byte[] buffer = new byte[8*1024];
+            int len;
+            while((len=fileInputStream.read(buffer)) != -1){
+                gzipOutputStream.write(buffer, 0, len);
+            }
+            gzipOutputStream.close();
+            fileOutputStream.close();
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод распаковки файла с помощью GZIP
+     * @param nameGZIPFile - имя файла GZIP
+     * @param nameFile - имя файла
+     */
+    public static void decompressionFile(String nameGZIPFile, String nameFile) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(nameGZIPFile);
+            GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+            FileOutputStream fileOutputStream = new FileOutputStream(nameFile);
+            byte[] buffer = new byte[8*1024];
+            int len;
+            while((len = gzipInputStream.read(buffer)) != -1){
+                fileOutputStream.write(buffer, 0, len);
+            }
+            fileOutputStream.close();
+            gzipInputStream.close();
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод сериализации GZIP в байтовый поток
+     * @param nameGZIPFile - имя файла GZIP
+     * @param out - поток
+     */
+    public static void serializeDZIP(String nameGZIPFile,OutputStream out){
+        try {
+            FileInputStream fileInputStream = new FileInputStream(nameGZIPFile);
+            GZIPOutputStream gzipOutputStream = new GZIPOutputStream(out);
+            byte[] buffer = new byte[8*1024];
+            int len;
+            while((len=fileInputStream.read(buffer)) != -1){
+                gzipOutputStream.write(buffer, 0, len);
+            }
+            gzipOutputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод десериализации GZIP в байтовый поток
+     * @param nameGZIPFile - имя файла GZIP
+     * @param in - поток
+     */
+    public  static void deserializeDZIP(String nameGZIPFile,InputStream in){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(nameGZIPFile);
+            GZIPInputStream gzipInputStream = new GZIPInputStream(in);
+            byte[] buffer = new byte[8*1024];
+            int len;
+            while((len = gzipInputStream.read(buffer)) != -1){
+                fileOutputStream.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
