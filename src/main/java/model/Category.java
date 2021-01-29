@@ -2,7 +2,7 @@ package model;
 
 /** Класс модель - категорий блюд со свойством <b>name</b>.
  */
-public class Category {
+public class Category implements Serializable {
     /** Поле название категории */
     private String nameCategory;
 
