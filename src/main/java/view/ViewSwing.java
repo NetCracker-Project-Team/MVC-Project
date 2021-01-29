@@ -4,11 +4,15 @@ import Client.Client;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class ViewSwing extends JFrame {
 
@@ -33,10 +37,9 @@ public class ViewSwing extends JFrame {
     private void begin(){
         frame = new JFrame("Меню");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(150, 150));
+        frame.setPreferredSize(new Dimension(500, 500));
 
         JPanel plain = new JPanel();
-
         plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
 
         JButton open = new JButton("Открыть");
@@ -50,9 +53,8 @@ public class ViewSwing extends JFrame {
         JButton download = new JButton("Загрузить");
         download.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
                 try {
-                    download();
+                    download(0);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -62,15 +64,13 @@ public class ViewSwing extends JFrame {
 
         frame.add(plain);
         frame.pack();
-
         frame.setVisible(true);
-
     }
 
     /**
      * Метод получения файла
      */
-    private void download() throws IOException {
+    private void download(int k) throws IOException {
         JFileChooser dialog = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "json file", "json");
@@ -78,9 +78,20 @@ public class ViewSwing extends JFrame {
         int result = dialog.showOpenDialog(this);
         file = dialog.getSelectedFile();
         if (result == JFileChooser.APPROVE_OPTION ){
-            String s = client.file(file.getAbsolutePath());
+            if (k == 0) {
+                String s = client.file(file.getAbsolutePath());
+            } else if (k == 1){
+                client.save("saveNewFile",file.getAbsolutePath());
+                JOptionPane.showMessageDialog(null, "Сохранение прошло успешно!");
+            } else{
+                String s  = client.addFile("addFile",file.getAbsolutePath());
+                if (s.equals("No")){
+                    JOptionPane.showMessageDialog(null, "Что-то пошло не так!");
+                } else{
+                    JOptionPane.showMessageDialog(null, "Добавление прошло успешно!");
+                }
+            }
             menu();
-
         }
     }
 
@@ -88,19 +99,13 @@ public class ViewSwing extends JFrame {
      * Метод с меню
      */
     private void menu(){
-        frame = new JFrame("Меню");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(300, 300));
-
         JPanel plain = new JPanel();
-
         plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
 
         JButton view = new JButton("Посмотреть меню");
         view.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 view();
-
             }
         });
         plain.add(view);
@@ -108,7 +113,7 @@ public class ViewSwing extends JFrame {
         JButton add = new JButton("Добавить данные");
         add.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                add();
             }
         });
         plain.add(add);
@@ -124,36 +129,30 @@ public class ViewSwing extends JFrame {
         JButton search = new JButton("Поиск по меню");
         search.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                search();
             }
         });
         plain.add(search);
 
-        JButton save = new JButton("Поиск по меню");
+        JButton save = new JButton("Сохранить");
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                save();
             }
         });
         plain.add(save);
 
-        frame.add(plain);
-        frame.pack();
-
-        frame.setVisible(true);
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
     }
 
     /**
      * Метод с меню для просмотра
      */
     private void view(){
-        frame.setVisible(false);
-        frame = new JFrame("Меню");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(300, 300));
-
         JPanel plain = new JPanel();
-
         plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
 
         JButton viewFull = new JButton("Все меню");
@@ -171,6 +170,11 @@ public class ViewSwing extends JFrame {
         JButton viewMC = new JButton("Меню по категориям");
         viewMC.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                try {
+                    viewDishByCategory();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
 
             }
         });
@@ -179,10 +183,407 @@ public class ViewSwing extends JFrame {
         JButton viewCat = new JButton("Категории");
         viewCat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                try {
+                    viewCategory();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
 
             }
         });
         plain.add(viewCat);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    /**
+     * Метод для просмотра всего меню
+     */
+    private void viewFullMenu() throws IOException {
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        Object[] columnsHeader = new String[] {"№","Блюдо", "Категория", "Цена"};
+        String[] dish_arr = client.print("printDish").split("\\*");
+        Object[][] array = new String[dish_arr.length/4][4];
+        for (int i = 0; i < dish_arr.length/4;i++){
+            for (int k = 0; k < 4; k ++){
+                array[i][k] = dish_arr[i*4+k];
+            }
+        }
+
+        // Таблица с настройками
+        JTable table = new JTable(array,columnsHeader){
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
+        table.setFillsViewportHeight(true);
+        JScrollPane table_scroll = new JScrollPane(table);
+        table_scroll.setPreferredSize(new Dimension(500,300));
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                view();
+            }
+        });
+        plain.add(table_scroll);
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void viewDishByCategory() throws IOException {
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        String[] category = client.print("printCategory").split("\\*");
+
+        JComboBox comboBox = new JComboBox(category);
+        comboBox.setEditable(false);
+        plain.add(comboBox);
+
+
+        Object[] columnsHeader = new String[] {"№","Блюдо", "Категория",
+                "Цена"};
+        Object[][] array = new String[0][0];
+        DefaultTableModel model = new DefaultTableModel(array, columnsHeader);
+        // Таблица с настройками
+        JTable table = new JTable(model){
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
+        table.setFillsViewportHeight(true);
+        JScrollPane table_scroll = new JScrollPane(table);
+        table_scroll.setPreferredSize(new Dimension(500,300));
+        plain.add(table_scroll);
+
+        JButton ok = new JButton("Показать");
+        ok.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String[] dish_arr = client.print("printDishByCategory",comboBox.getSelectedItem().toString()).split("\\*");
+                    Object[][] arrayNew = new String[dish_arr.length/4][4];
+                    for (int i = 0; i < dish_arr.length/4;i++){
+                        for (int k = 0; k < 4; k ++){
+                            arrayNew[i][k] = dish_arr[i*4+k];
+                        }
+                    }
+                    model.setRowCount(0);
+                    DefaultTableModel modelNew = (DefaultTableModel)table.getModel();
+                    for (Object[] row : arrayNew) {
+                        modelNew.addRow(row);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(ok);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               view();
+            }
+        });
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void viewCategory() throws IOException {
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        Object[] columnsHeader = new String[] {"№","Категории"};
+        String[] category = client.print("printCategory").split("\\*");
+        Object[][] array = new String[category.length][2];
+        for (int i = 0; i < category.length; i++){
+            array[i][0] = Integer.toString(i+1);
+            array[i][1] = category[i];
+        }
+        // Таблица с настройками
+        JTable table = new JTable(array,columnsHeader){
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
+        table.setFillsViewportHeight(true);
+        JScrollPane table_scroll = new JScrollPane(table);
+        table_scroll.setPreferredSize(new Dimension(500,300));
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                view();
+            }
+        });
+        plain.add(table_scroll);
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void add(){
+        JPanel plain = new JPanel();
+
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        JButton addDish = new JButton("Добавить блюдо");
+        addDish.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    addDish();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(addDish);
+
+        JButton addCategory = new JButton("Добавить категорию");
+        addCategory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addCategory();
+
+            }
+        });
+        plain.add(addCategory);
+
+        JButton addFile = new JButton("Добавить данные из файла");
+        addFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Выберите файл с данными");
+                try {
+                    download(2);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+        plain.add(addFile);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void addDish() throws IOException {
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        JTextField name = new JTextField(25);
+        name.setFont(new Font("Dialog", Font.PLAIN, 14));
+        name.setHorizontalAlignment(JTextField.LEFT);
+
+        String[] category = client.print("printCategory").split("\\*");
+
+        JComboBox comboBox = new JComboBox(category);
+        comboBox.setEditable(true);
+        plain.add(comboBox);
+
+        NumberFormat price =  new DecimalFormat("##0.###");
+        JFormattedTextField numberField = new JFormattedTextField(new NumberFormatter(price));
+        numberField.setColumns(10);
+
+        plain.add(new JLabel("Название категории :"));
+        plain.add(name);
+        plain.add(new JLabel("Категория :"));
+        plain.add(comboBox);
+        plain.add(new JLabel("Цена :"));
+        plain.add(numberField);
+
+        JButton add = new JButton("Добавить");
+        add.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               Dish dish = new Dish(name.getText(),
+                       new Category(comboBox.getSelectedItem().toString()),
+                       new Double(numberField.getValue().toString()));
+                try {
+                    String res = client.addData("addData",dish);
+                    if (res.equals("Yes")){
+                        JOptionPane.showMessageDialog(null, "Добавление прошло успешно");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Такое блюдо уже есть!");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(add);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void addCategory(){
+        JPanel plain = new JPanel();
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+
+        JTextField name = new JTextField(25);
+        name.setFont(new Font("Dialog", Font.PLAIN, 14));
+        name.setHorizontalAlignment(JTextField.LEFT);
+
+
+        plain.add(new JLabel("Название категории :"));
+        plain.add(name);
+
+        JButton add = new JButton("Добавить");
+        add.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String res = client.addData("addCategory",name.getText());
+                    if (res.equals("Yes")){
+                        JOptionPane.showMessageDialog(null, "Добавление прошло успешно");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Такая категория уже есть!");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(add);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+
+        plain.add(cancel);
+
+        frame.getContentPane().removeAll();
+        frame.getContentPane().invalidate();
+        frame.getContentPane().add(plain);
+        frame.getContentPane().revalidate();
+    }
+
+    private void search(){
+        frame.setVisible(false);
+        frame = new JFrame("Меню");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(300, 300));
+
+        JPanel plain = new JPanel();
+
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
+        plain.add(new Label("Введите запрос для поиска(Например, тор?ик*)"));
+        JTextField search = new JTextField(25);
+        search.setFont(new Font("Dialog", Font.PLAIN, 14));
+        search.setHorizontalAlignment(JTextField.LEFT);
+        plain.add(search);
+
+        plain.add(new Label("Как искать: "));
+
+        JComboBox comboBox = new JComboBox(new String[]{"по категории","по блюду"});
+        comboBox.setEditable(false);
+        plain.add(comboBox);
+
+
+        Object[] columnsHeader = new String[] {"№","Блюдо", "Категория",
+                "Цена"};
+        Object[][] array = new String[0][0];
+        DefaultTableModel model = new DefaultTableModel(array, columnsHeader);
+        // Таблица с настройками
+        JTable table = new JTable(model){
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
+        table.setFillsViewportHeight(true);
+        JScrollPane table_scroll = new JScrollPane(table);
+        table_scroll.setPreferredSize(new Dimension(500,300));
+        plain.add(table_scroll);
+
+        JButton searchB = new JButton("Найти");
+        searchB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String method = "getDataByCategory";
+                    if (comboBox.getSelectedIndex() == 1){
+                        method = "getDataByName";
+                    }
+                    String[] dish_arr = client.print(method,search.getText()).split("\\*");
+                    Object[][] arrayNew = new String[dish_arr.length/4][4];
+                    for (int i = 0; i < dish_arr.length/4;i++){
+                        for (int k = 0; k < 4; k ++){
+                            arrayNew[i][k] = dish_arr[i*4+k];
+                        }
+                    }
+                    model.setRowCount(0);
+                    DefaultTableModel modelNew = (DefaultTableModel)table.getModel();
+                    for (Object[] row : arrayNew) {
+                        modelNew.addRow(row);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(searchB);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+
+        plain.add(cancel);
 
         frame.add(plain);
         frame.pack();
@@ -190,37 +591,53 @@ public class ViewSwing extends JFrame {
         frame.setVisible(true);
     }
 
-    /**
-     * Метод для просмотра всего меню
-     */
-    private void viewFullMenu() throws IOException {
-        frame.setVisible(false);
-        frame = new JFrame("Меню");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setPreferredSize(new Dimension(500, 500));
+    private void save(){
+        frame.getContentPane().removeAll();
 
-       /* Object[] columnsHeader = new String[] {"Блюдо", "Категория",
-                "Цена"};
-        Object[][] array = new String[][] {{ "Сахар" , "кг", "1.5" },
-                { "Мука"  , "кг", "4.0" },
-                { "Молоко", "л" , "2.2" }};
+        JPanel plain = new JPanel();
 
-        // Таблица с настройками
-        JTable table = new JTable(array,columnsHeader);
-        table.setFillsViewportHeight(true);
-        JScrollPane table_scroll = new JScrollPane(table);
-        table_scroll.setPreferredSize(new Dimension(500,300));
+        plain.setLayout(new BoxLayout(plain, BoxLayout.Y_AXIS));
 
-        frame.add(table_scroll);*/
+        JButton save = new JButton("сохранить");
+        save.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    client.save("saveFile");
+                    JOptionPane.showMessageDialog(null, "Сохранение прошло успешно!");
 
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(save);
 
-        frame.pack();
-        frame.setVisible(true);
+        JButton addCategory = new JButton("сохранить как копию");
+        addCategory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Выберите файл для сохранения");
+                try {
+                    download(1);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        plain.add(addCategory);
+
+        JButton cancel = new JButton("Назад");
+        cancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu();
+            }
+        });
+
+        plain.add(cancel);
+
+        frame.add(plain);
     }
 
-
     public static void main (String [] args) throws IOException {
-
         ViewSwing windowApplication = new ViewSwing();
     }
 }
