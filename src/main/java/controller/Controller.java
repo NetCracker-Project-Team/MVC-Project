@@ -31,8 +31,9 @@ public class Controller {
      */
     public static void setDataByName(String name, Dish dish, List<Dish> dishes) {
         int numDish = 0;
-        while (numDish < dishes.size()) {
-            if (dishes.get(numDish).getName().equals(name)) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            if (iterator.next().getName().equals(name)) {
                 dishes.set(numDish, dish);
                 break;
             }
@@ -48,11 +49,11 @@ public class Controller {
      * @throws IOException
      */
     public static void setCategoryByName(String name, Category category, List<Dish> dishes) {
-        Dish dish = new Dish(name, category, 0);
         int numDish = 0;
-        while (numDish < dishes.size()) {
-            if (dishes.get(numDish).getName().equals(dish.getName())) {
-                dishes.get(numDish).setCategory(dish.getCategory());
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            if (iterator.next().getName().equals(name)) {
+                dishes.get(numDish).setCategory(category);
                 break;
             }
             numDish++;
@@ -68,8 +69,9 @@ public class Controller {
      */
     public static void setNameByName(String name, String newName, List<Dish> dishes) {
         int numDish = 0;
-        while (numDish < dishes.size()) {
-            if (dishes.get(numDish).getName().equals(name)) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            if (iterator.next().getName().equals(name)) {
                 dishes.get(numDish).setName(newName);
                 break;
             }
@@ -85,8 +87,9 @@ public class Controller {
      */
     public static void setPriceByName(String name, Double price, List<Dish> dishes) {
         int numDish = 0;
-        while (numDish < dishes.size()) {
-            if (dishes.get(numDish).getName().equals(name)) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            if (iterator.next().getName().equals(name)) {
                 dishes.get(numDish).setPrice(price);
                 break;
             }
@@ -105,9 +108,7 @@ public class Controller {
     public static boolean addData(Dish dish, List<Dish> dishes, List<Category> categories) {
         if (compareDishes(dishes, dish)) {
             dishes.add(dish);
-            for (int i = 0; i < dishes.size(); i++) {
-                addCategory(dishes.get(i).getCategory(), categories);
-            }
+            addCategory(dish.getCategory(), categories);
             return true;
         } else {
             return false;
@@ -122,8 +123,9 @@ public class Controller {
      * @throws IOException
      */
     public static void addCategoryByDish(List<Dish> dishes, List<Category> categories) {
-        for (int i = 0; i < dishes.size(); i++) {
-            addCategory(dishes.get(i).getCategory(), categories);
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            addCategory(iterator.next().getCategory(), categories);
         }
     }
 
@@ -135,8 +137,9 @@ public class Controller {
      */
     public static void deleteData(String name, List<Dish> dishes) {
         int numDish = 0;
-        while (numDish < dishes.size()) {
-            if (dishes.get(numDish).getName().equals(name)) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            if (iterator.next().getName().equals(name)) {
                 dishes.remove(numDish);
                 break;
             }
@@ -153,10 +156,12 @@ public class Controller {
     public static StringBuffer printDish (List<Dish> dishes) {
         StringBuffer resultString = new StringBuffer();
         int numDish = 1;
-        for (int i = 0; i < dishes.size(); i++) {
-            resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
-                    + dishes.get(i).getCategory().getNameCategory() + "*"
-                    + dishes.get(i).getPrice() + "\n");
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            Dish dish= iterator.next();
+            resultString.append(numDish + "*" + dish.getName() + "*"
+                    + dish.getCategory().getNameCategory() + "*"
+                    + dish.getPrice() + "*");
             numDish++;
         }
         return resultString;
@@ -183,11 +188,10 @@ public class Controller {
      * @return возвращает значение истина или ложь
      */
     private static boolean compareDishes(List<Dish> dishes, Dish dish) {
-        int numDish = 0;
         boolean bool = true;
-        while (numDish < dishes.size() && bool) {
-            bool = compareDish(dishes.get(numDish), dish);
-            numDish++;
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext() && bool) {
+            bool = compareDish(iterator.next(), dish);
         }
         return bool;
     }
@@ -202,12 +206,11 @@ public class Controller {
     public static boolean addFile(List<Dish> dishes, List<Dish> otherDishes) {
         if (dishes.size() != 0 && otherDishes.size() != 0) {
             boolean changeTest = false;
-            int numDish = 0;
-            while (numDish < otherDishes.size()) {
-                if (dishes.add(otherDishes.get(numDish))) {
+            ItDishes iterator=new ItDishes(otherDishes);
+            while (iterator.hasNext()) {
+                if (dishes.add(iterator.next())) {
                     changeTest = true;
                 }
-                numDish++;
             }
             return changeTest;
         } else {
@@ -240,11 +243,10 @@ public class Controller {
      * @return возвращает значение истина или ложь
      */
     public static boolean compareCategories(List<Category> categories, Category category) {
-        int numCategory = 0;
         boolean changeTest = true;
-        while (numCategory < categories.size() && changeTest) {
-            changeTest = compareCategory(categories.get(numCategory), category);
-            numCategory++;
+        ItCategories iterator=new ItCategories(categories);
+        while (iterator.hasNext() && changeTest) {
+            changeTest = compareCategory(iterator.next(), category);
         }
         return changeTest;
     }
@@ -275,11 +277,13 @@ public class Controller {
     public static StringBuffer printDishByCategory(String category, List<Dish> dishes) {
         StringBuffer resultString = new StringBuffer();
         int numDish = 1;
-        for (int i = 0; i < dishes.size(); i++) {
-            if (dishes.get(i).getCategory().getNameCategory().equals(category)) {
-                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
-                        + dishes.get(i).getCategory().getNameCategory() + "*"
-                        + dishes.get(i).getPrice() + "\n");
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
+            Dish dish= iterator.next();
+            if (dish.getCategory().getNameCategory().equals(category)) {
+                resultString.append(numDish + "*" + dish.getName() + "*"
+                        + dish.getCategory().getNameCategory() + "*"
+                        + dish.getPrice() + "*");
                 numDish++;
             }
         }
@@ -294,8 +298,9 @@ public class Controller {
      */
     public static StringBuffer printCategory(List<Category> categories) {
         StringBuffer resultString = new StringBuffer();
-        for (int i = 0; i < categories.size(); i++) {
-            resultString.append(categories.get(i).toString() + "\n");
+        ItCategories iterator=new ItCategories(categories);
+        while (iterator.hasNext()) {
+            resultString.append(iterator.next().getNameCategory() + "*");
         }
         return resultString;
     }
@@ -311,16 +316,18 @@ public class Controller {
         StringBuffer resultString = new StringBuffer();
         char[] arrayName = name.toCharArray();
         int numDish = 1;
-        for (int i = 0; i < dishes.size(); i++) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
             int numArrayName = 0, numDishName = 0;
             boolean checkEqual = false;
+            Dish dish= iterator.next();
             while (numArrayName < arrayName.length) {
                 if (arrayName[numArrayName] == '*' || arrayName[numArrayName] == '?') {
                     numArrayName++;
                 } else {
                     checkEqual = false;
-                    while (numDishName < dishes.get(i).getName().length() && !checkEqual) {
-                        char[] d = dishes.get(i).getName().toCharArray();
+                    while (numDishName < dish.getName().length() && !checkEqual) {
+                        char[] d = dish.getName().toCharArray();
                         if (arrayName[numArrayName] == d[numDishName]) {
                             checkEqual = true;
                         }
@@ -330,9 +337,9 @@ public class Controller {
                 }
             }
             if (checkEqual) {
-                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
-                        + dishes.get(i).getCategory().getNameCategory() + "*"
-                        + dishes.get(i).getPrice() + '\n');
+                resultString.append(numDish + "*" + dish.getName() + "*"
+                        + dish.getCategory().getNameCategory() + "*"
+                        + dish.getPrice() + '*');
                 numDish++;
             }
         }
@@ -350,16 +357,18 @@ public class Controller {
         StringBuffer resultString = new StringBuffer();
         char[] arrayCategoryName = category.toCharArray();
         int numDish = 1;
-        for (int i = 0; i < dishes.size(); i++) {
+        ItDishes iterator=new ItDishes(dishes);
+        while (iterator.hasNext()) {
             int numArrayCategoryName = 0, numDishCategory = 0;
             boolean bool = false;
+            Dish dish=iterator.next();
             while (numArrayCategoryName < arrayCategoryName.length) {
                 if (arrayCategoryName[numArrayCategoryName] == '*' || arrayCategoryName[numArrayCategoryName] == '?') {
                     numArrayCategoryName++;
                 } else {
                     bool = false;
-                    while (numDishCategory < dishes.get(i).getCategory().getNameCategory().length() && !bool) {
-                        char[] d = dishes.get(i).getCategory().getNameCategory().toCharArray();
+                    while (numDishCategory < dish.getCategory().getNameCategory().length() && !bool) {
+                        char[] d = dish.getCategory().getNameCategory().toCharArray();
                         if (arrayCategoryName[numArrayCategoryName] == d[numDishCategory]) {
                             bool = true;
                         }
@@ -369,12 +378,14 @@ public class Controller {
                 }
             }
             if (bool) {
-                resultString.append(numDish + "*" + dishes.get(i).getName() + "*"
-                        + dishes.get(i).getCategory().getNameCategory() + "*"
-                        + dishes.get(i).getPrice() + '\n');
+                resultString.append(numDish + "*" + dish.getName() + "*"
+                        + dish.getCategory().getNameCategory() + "*"
+                        + dish.getPrice() + '*');
                 numDish++;
             }
         }
         return resultString;
     }
+
 }
+
