@@ -75,8 +75,8 @@ public class Serialize {
     public static Dish deserializeDish (InputStream in){
         try {
             ObjectInputStream stream = new ObjectInputStream(in);
-            Dish build = (Dish) stream.readObject();
-            return build;
+            Dish dish = (Dish) stream.readObject();
+            return dish;
         }
         catch (IOException e){
             System.out.println("Some error occurred!");
